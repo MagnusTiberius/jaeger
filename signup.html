@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Carousel Template &middot; Bootstrap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/static/css/cerulean/bootstrap.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/cerulean/custom_css_1.css" rel="stylesheet" type="text/css"/>
+    <style>
+
+    
+    </style>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
+  </head>
+
+  <body>
+
+     <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+          <!--
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="../navbar/">Default</a></li>
+            <li><a href="../navbar-static-top/">Static top</a></li>
+            <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li>
+          </ul>
+          -->
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
+    <br><br><br>
+
+    <div class="container">    
+        <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
+            <div class="panel panel-info" >
+                    <div class="panel-heading">
+                        <div class="panel-title">Sign In</div>
+                        <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="#">Forgot password?</a></div>
+                    </div>     
+
+                    <div style="padding-top:30px" class="panel-body" >
+
+                        <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+                            
+                        <form id="loginform" class="form-horizontal" role="form">
+                                    
+                            <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                        <input id="login-username" type="text" class="form-control" name="username" value="" placeholder="username or email">                                        
+                                    </div>
+                                
+                            <div style="margin-bottom: 25px" class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                        <input id="login-password" type="password" class="form-control" name="password" placeholder="password">
+                                    </div>
+                                    
+
+                                
+                            <div class="input-group">
+                                      <div class="checkbox">
+                                        <label>
+                                          <input id="login-remember" type="checkbox" name="remember" value="1"> Remember me
+                                        </label>
+                                      </div>
+                                    </div>
+
+
+                                <div style="margin-top:10px" class="form-group">
+                                    <!-- Button -->
+
+                                    <div class="col-sm-12 controls">
+                                      <a id="btn-login" href="#" class="btn btn-success">Login  </a>
+                                      <a id="btn-fblogin" href="#" class="btn btn-primary">Login with Facebook</a>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <div class="col-md-12 control">
+                                        <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%" >
+                                            Don't have an account! 
+                                        <a href="#" onClick="$('#loginbox').hide(); $('#signupbox').show()">
+                                            Sign Up Here
+                                        </a>
+                                        </div>
+                                    </div>
+                                </div>    
+                            </form>     
+
+
+
+                        </div>                     
+                    </div>  
+        </div>
+        <div id="signupbox" style="display:none; margin-top:50px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <div class="panel-title">Sign Up</div>
+                            <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#" onclick="$('#signupbox').hide(); $('#loginbox').show()">Sign In</a></div>
+                        </div>  
+                        <div class="panel-body" >
+                            <form id="signupform" class="form-horizontal" role="form" method="post" action="/signup">
+                                
+                                <div id="signupalert" style="display:none" class="alert alert-danger">
+                                    <p>Error:</p>
+                                    <span></span>
+                                </div>
+                                    
+                                
+                                  
+                                <div class="form-group">
+                                    <label for="email" class="col-md-3 control-label">Email</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="email" placeholder="Email Address">
+                                    </div>
+                                </div>
+                                    
+                                <div class="form-group">
+                                    <label for="firstname" class="col-md-3 control-label">First Name</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="firstname" placeholder="First Name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" class="col-md-3 control-label">Last Name</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="lastname" placeholder="Last Name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" class="col-md-3 control-label">Password</label>
+                                    <div class="col-md-9">
+                                        <input type="password" class="form-control" name="passwd" placeholder="Password">
+                                    </div>
+                                </div>
+                                    
+                                <div class="form-group">
+                                    <label for="icode" class="col-md-3 control-label">Invitation Code</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="icode" placeholder="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <!-- Button -->                                        
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button id="btn-signup" type="submit" class="btn btn-info"><i class="icon-hand-right"></i> &nbsp Sign Up</button>
+                                        <span style="margin-left:8px;">or</span>  
+                                    </div>
+                                </div>
+                                
+                                <div style="border-top: 1px solid #999; padding-top:20px"  class="form-group">
+                                    
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button id="btn-fbsignup" type="button" class="btn btn-primary"><i class="icon-facebook"></i>   Sign Up with Facebook</button>
+                                    </div>                                           
+                                        
+                                </div>
+                                
+                                
+                                
+                            </form>
+                         </div>
+                    </div>
+
+               
+               
+                
+         </div> 
+    </div>
+
+
+    <br><br><br><br><br><br>
+
+      <!-- FOOTER -->
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>&copy; 2013 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+      </footer>
+
+    </div><!-- /.container -->
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/js/jquery.js"></script>
+  <script src="/static/js/bootstrap.js"></script>
+  <script src="/static/js/angular.min.js"></script>
+  
+
+  </body>
+</html>

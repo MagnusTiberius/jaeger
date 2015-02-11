@@ -22,9 +22,15 @@ func SignUp(u *User, r *http.Request) bool {
 		return false
 	}
 
-	k := datastore.NewKey(c, "User", u.Email, 0, nil)
-	datastore.Put(c, k, &u)
 
+	k := datastore.NewKey(c, "User", u.Email, 0, nil)
+	
+	_, err := datastore.Put(c, k, u)
+	if err != nil {
+		panic(err)
+        //http.Error(w, err.Error(), http.StatusInternalServerError)
+        return false
+    }	
 	return true
 
 	/*
@@ -52,9 +58,12 @@ func EmailExists(u *User, r *http.Request) bool {
 		_ = key
 		_ = err
         if err == datastore.Done {
+        		//panic("Done")
+        		return false
                 break // No further entities match the query.
         }
         if err != nil {
+        		panic(err)
                 c.Errorf("fetching next Person: %v", err)
                 break
         }		

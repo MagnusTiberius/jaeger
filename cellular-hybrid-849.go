@@ -10,7 +10,7 @@ import (
 	"html/template"
 	"bytes"
 	//"database/sql"
-	_ "api/mysqlmaster"
+	_ "github.com/go-sql-driver/mysql"
 	_ "api/db"
 	users "api/users"
 	"github.com/gorilla/mux"
@@ -23,6 +23,8 @@ var (
 		"about.html",
 		"contact.html",
 		"error.html",
+		"template1/signupgood.html",
+		"template1/signupinvalid.html",
 	))
 )
 
@@ -30,6 +32,7 @@ func init() {
 	rtr := mux.NewRouter()
 	http.HandleFunc("/", handleHome)
 	http.HandleFunc("/signup", handleSignUp)
+	http.HandleFunc("/signup/good", handleSignUpGood)
 	http.HandleFunc("/about", handleAbout)
 	http.HandleFunc("/contact", handleContact)
 	http.HandleFunc("/error", handleError)
@@ -76,6 +79,18 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 	b.WriteTo(w)
 }
 
+
+func handleSignUpGood(w http.ResponseWriter, r *http.Request) {
+	b := &bytes.Buffer{}
+	if err := templates.ExecuteTemplate(b, "template1/signupgood.html", nil); err != nil {
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
+
+}
+
+
 func handleSignUp(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
@@ -96,15 +111,23 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 		u.Email = email
 		u.Password = pwd
 		u.UserName = uname
-		users.SignUp(u)
-		
-		b := &bytes.Buffer{}
-		if err := templates.ExecuteTemplate(b, "index.html", nil); err != nil {
-			panic(err)
-			//writeError(w, r, err)
-			return
+		if users.SignUp(u, r) {
+			b := &bytes.Buffer{}
+			if err := templates.ExecuteTemplate(b, "signupgood.html", nil); err != nil {
+				panic(err)
+				//writeError(w, r, err)
+				return
+			}
+			b.WriteTo(w)
+		} else {
+			b := &bytes.Buffer{}
+			if err := templates.ExecuteTemplate(b, "signupinvalid.html", nil); err != nil {
+				panic(err)
+				//writeError(w, r, err)
+				return
+			}
+			b.WriteTo(w)
 		}
-		b.WriteTo(w)
 	}
 
 	if r.Method == "GET" {

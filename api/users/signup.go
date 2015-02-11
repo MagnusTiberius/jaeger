@@ -51,10 +51,14 @@ func EmailExists(u *User, r *http.Request) bool {
 		key, err := t.Next(&x)
 		_ = key
 		_ = err
-		if err != nil {
-			panic(err)
-		}
-		return true
+        if err == datastore.Done {
+                break // No further entities match the query.
+        }
+        if err != nil {
+                c.Errorf("fetching next Person: %v", err)
+                break
+        }		
+        return true
 	}
 
 	return false

@@ -27,6 +27,10 @@ var (
 		"template1/signupgood.html",
 		"template1/signupinvalid.html",
 		"myaccount.html",
+		"invitm.html",
+		"navbar.html",
+		"maindochdr.html",
+		"maindocftr.html",
 	))
 )
 
@@ -42,6 +46,7 @@ func init() {
 	http.HandleFunc("/contact", handleContact)
 	http.HandleFunc("/error", handleError)
 	rtr.HandleFunc("/user/{name:[a-z]+}/myaccount", handleProfile).Methods("GET","POST")
+	rtr.HandleFunc("/vehicle/{name:[a-z]+}/create", handleInvItm).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
 	http.Handle("/", rtr)
 	/*
@@ -76,23 +81,40 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 	b.WriteTo(w)
 }
 
+func handleInvItm(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	name := params["name"]
+	_ = name
+	b := &bytes.Buffer{}
+	h := GetSessionWebPage(w,r)
+	if err := templates.ExecuteTemplate(b, "invitm.html", h); err != nil {
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
+}
+
+
 type WebPage struct {
 	UserName 	string
 	Email 		string
+	NavBar 		string
 }
 
 func GetSessionWebPage(w http.ResponseWriter, r *http.Request) WebPage {
 	var h WebPage
 	session, _ := store.Get(r, "jaegersignup")
 	var name string 
-	var email string 
+	var email string
+	var navbar string 
 	if len(session.Values) > 0 {
 		name = session.Values["UserName"].(string)
 		email = session.Values["Email"].(string)
+		navbar = "navbar.html"
 		//if len(name) == 0  {
 		//	name = "Undefined Name"
 		//}
-		h = WebPage{UserName:name, Email:email}
+		h = WebPage{UserName:name, Email:email, NavBar:navbar}
 	} 
 	return h
 }
@@ -109,8 +131,9 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 
 
 func handleSignUpGood(w http.ResponseWriter, r *http.Request) {
+	h := GetSessionWebPage(w,r)
 	b := &bytes.Buffer{}
-	if err := templates.ExecuteTemplate(b, "template1/signupgood.html", nil); err != nil {
+	if err := templates.ExecuteTemplate(b, "template1/signupgood.html", h); err != nil {
 		//writeError(w, r, err)
 		return
 	}
@@ -149,7 +172,7 @@ func handleSignIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleSignUp(w http.ResponseWriter, r *http.Request) {
-
+	h := GetSessionWebPage(w,r)
 	if r.Method == "POST" {
 		
 		email := r.FormValue("email")
@@ -173,7 +196,7 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 		u.LastName = r.FormValue("lastname") 
 		if users.SignUp(u, r) {
 			b := &bytes.Buffer{}
-			if err := templates.ExecuteTemplate(b, "signupgood.html", nil); err != nil {
+			if err := templates.ExecuteTemplate(b, "signupgood.html", h); err != nil {
 				panic(err)
 				//writeError(w, r, err)
 				return
@@ -181,7 +204,7 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 			b.WriteTo(w)
 		} else {
 			b := &bytes.Buffer{}
-			if err := templates.ExecuteTemplate(b, "signupinvalid.html", nil); err != nil {
+			if err := templates.ExecuteTemplate(b, "signupinvalid.html", h); err != nil {
 				panic(err)
 				//writeError(w, r, err)
 				return
@@ -192,7 +215,7 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		b := &bytes.Buffer{}
-		if err := templates.ExecuteTemplate(b, "signup.html", nil); err != nil {
+		if err := templates.ExecuteTemplate(b, "signup.html", h); err != nil {
 			//writeError(w, r, err)
 			return
 		}
@@ -201,10 +224,10 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleAbout(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprint(w, "<html><body>Hello, World! 세상아 안녕!</body></html>")
+	h := GetSessionWebPage(w,r)
 	
 	b := &bytes.Buffer{}
-	if err := templates.ExecuteTemplate(b, "about.html", nil); err != nil {
+	if err := templates.ExecuteTemplate(b, "about.html", h); err != nil {
 		//writeError(w, r, err)
 		return
 	}
@@ -212,10 +235,10 @@ func handleAbout(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleContact(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprint(w, "<html><body>Hello, World! 세상아 안녕!</body></html>")
+	h := GetSessionWebPage(w,r)
 	
 	b := &bytes.Buffer{}
-	if err := templates.ExecuteTemplate(b, "contact.html", nil); err != nil {
+	if err := templates.ExecuteTemplate(b, "contact.html", h); err != nil {
 		//writeError(w, r, err)
 		return
 	}
@@ -223,10 +246,10 @@ func handleContact(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleError(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprint(w, "<html><body>Hello, World! 세상아 안녕!</body></html>")
+	h := GetSessionWebPage(w,r)
 	
 	b := &bytes.Buffer{}
-	if err := templates.ExecuteTemplate(b, "error.html", nil); err != nil {
+	if err := templates.ExecuteTemplate(b, "error.html", h); err != nil {
 		//writeError(w, r, err)
 		return
 	}

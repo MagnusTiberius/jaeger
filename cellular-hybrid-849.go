@@ -5,7 +5,7 @@
 package cellularhybrid849
 
 import (
-	//"fmt"
+	"fmt"
 	"net/http"
 	"html/template"
 	"bytes"
@@ -46,7 +46,7 @@ func init() {
 	http.HandleFunc("/contact", handleContact)
 	http.HandleFunc("/error", handleError)
 	rtr.HandleFunc("/user/{name:[a-z]+}/myaccount", handleProfile).Methods("GET","POST")
-	rtr.HandleFunc("/vehicle/{name:[a-z]+}/create", handleInvItm).Methods("GET","POST")
+	rtr.HandleFunc("/entity/{name:[a-z]+}/create", handleInvItm).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
 	http.Handle("/", rtr)
 	/*
@@ -144,6 +144,8 @@ func handleSignUpGood(w http.ResponseWriter, r *http.Request) {
 
 
 func handleSignIn(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Printf("handleSignIn \n")
 
 	if r.Method == "POST" {
 		email := r.FormValue("email")

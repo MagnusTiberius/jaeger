@@ -15,6 +15,22 @@
   <script src="/static/js/angular.min.js"></script>
   <script src="/static/js/app/controllers.js"></script>
 
+    <script>
+
+        $(window).scroll(function () {
+            var scroll = $(window).scrollTop();
+            if (scroll >= 70) {
+                debugger
+                $('.navbar').removeClass('navbar-static-top');
+                $('.navbar').addClass('navbar-fixed-top');
+            } else {
+                debugger
+                $('.navbar').removeClass('navbar-fixed-top');
+                $('.navbar').addClass('navbar-static-top');
+            }
+        });    
+    </script>
+
   </body>
 </html>
 [[end]]

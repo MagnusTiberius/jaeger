@@ -31,6 +31,8 @@ var (
 		"navbar.html",
 		"maindochdr.html",
 		"maindocftr.html",
+		"vehiclecreate.html",
+		"vehicleedit.html",
 	))
 )
 
@@ -47,6 +49,7 @@ func init() {
 	http.HandleFunc("/error", handleError)
 	rtr.HandleFunc("/user/{name:[a-z]+}/myaccount", handleProfile).Methods("GET","POST")
 	rtr.HandleFunc("/entity/{name:[a-z]+}/create", handleInvItm).Methods("GET","POST")
+	rtr.HandleFunc("/vehicle/{name:[a-z]+}/create", handleVehicleCreate).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
 	http.Handle("/", rtr)
 	/*
@@ -80,6 +83,35 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 	}
 	b.WriteTo(w)
 }
+
+
+
+
+func handleVehicleCreate(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	name := params["name"]
+	_ = name
+
+	if r.Method == "POST" {
+		b := &bytes.Buffer{}
+		h := GetSessionWebPage(w,r)
+		if err := templates.ExecuteTemplate(b, "vehicleedit.html", h); err != nil {
+			//writeError(w, r, err)
+			return
+		}
+		b.WriteTo(w)
+		return
+	}
+
+	b := &bytes.Buffer{}
+	h := GetSessionWebPage(w,r)
+	if err := templates.ExecuteTemplate(b, "vehiclecreate.html", h); err != nil {
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
+}
+
 
 func handleInvItm(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)

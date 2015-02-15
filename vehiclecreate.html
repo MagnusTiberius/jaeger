@@ -1,0 +1,75 @@
+[[template "maindochdr" .]]
+
+[[template "navbar" .]]
+
+    <br><br><br>
+
+
+
+  <form id="loginform" class="form-horizontal" role="form" method="post" action="">
+
+    <div class="container">    
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-addon" id="basic-addon0">@</span>
+                      <div id="makeInput">
+                      <input type="text" class="form-control" style="margin: 0 auto;" data-provide="typeahead" data-items="4" placeholder="Vehicle Manufacturer" aria-describedby="basic-addon1" data-source='["Audi","BMW","Toyota","Nissan","General Motors","Mitsubishi","Mercedez Benz","Chrysler"]'>
+                      </div>
+                    </div>
+                </div>
+                <div class="caption">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-addon" id="basic-addon2">@</span>
+                      <div id="makeInput">
+                      <input type="text" class="form-control" style="margin: 0 auto;" data-provide="typeahead" data-items="4" placeholder="Model" aria-describedby="basic-addon1" data-source='["Sedan","Coupe","SUV","Crossover","Truck"]'>
+                      </div>
+                    </div>
+                </div>
+                <div class="caption">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-addon" id="basic-addon1">@</span>
+                      <input type="text" class="form-control" placeholder="Trim" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <!--
+                <div class="caption">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-addon" id="basic-addon1">@</span>
+                      <input type="text" class="form-control" placeholder="caption" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="caption">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-addon" id="basic-addon1">@</span>
+                      <div id="stateInput">
+                      <input type="text" class="form-control" style="margin: 0 auto;" data-provide="typeahead" data-items="4" placeholder="States of USA" aria-describedby="basic-addon1" data-source='["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Dakota","North Carolina","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]'>
+                      </div>
+                    </div>
+                </div>
+              -->
+            </div>
+
+          <div class="col-sm-12 controls">
+              <button id="btn-signin" type="submit" class="btn btn-info"><i class="icon-hand-right"></i> &nbsp Continue</button>
+              <!--
+            <a id="btn-login" href="#" class="btn btn-success">Login  </a>
+            <a id="btn-fblogin" href="#" class="btn btn-primary">Login with Facebook</a>
+        -->
+
+          </div>
+
+
+        </div>
+    </div>
+  </form>
+
+    <script>
+        $('.typeahead').typeahead();
+
+    </script>
+
+
+
+[[template "maindocftr" .]]

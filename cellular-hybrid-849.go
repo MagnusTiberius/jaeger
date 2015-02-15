@@ -15,6 +15,11 @@ import (
 	users "api/users"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"api/context"
+	"api/inv"
+ 	"api/main"
+	"appengine/datastore"
+	"appengine"	 	
 )
 
 var (
@@ -33,12 +38,17 @@ var (
 		"maindocftr.html",
 		"vehiclecreate.html",
 		"vehicleedit.html",
+		"vehicles.html",
 	))
 )
 
-var store = sessions.NewCookieStore([]byte("something-very-secret"))
+var store *sessions.CookieStore //= sessions.NewCookieStore([]byte("something-very-secret"))
+
+var appcontext *context.Context
 
 func init() {
+	appcontext = context.NewContext()
+
 	rtr := mux.NewRouter()
 	//http.HandleFunc("/", handleHome)
 	http.HandleFunc("/signup", handleSignUp)
@@ -48,8 +58,11 @@ func init() {
 	http.HandleFunc("/contact", handleContact)
 	http.HandleFunc("/error", handleError)
 	rtr.HandleFunc("/user/{name:[a-z]+}/myaccount", handleProfile).Methods("GET","POST")
+	rtr.HandleFunc("/user/{name:[a-z]+}/signout", handleSignout).Methods("GET","POST")
+	rtr.HandleFunc("/user/{name:[a-z]+}/vehicles", handleVehicles).Methods("GET","POST")
 	rtr.HandleFunc("/entity/{name:[a-z]+}/create", handleInvItm).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-z]+}/create", handleVehicleCreate).Methods("GET","POST")
+	rtr.HandleFunc("/vehicle/{name:[a-z]+}/edit", handleVehicleEdit).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
 	http.Handle("/", rtr)
 	/*
@@ -76,7 +89,7 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 	name := params["name"]
 	_ = name
 	b := &bytes.Buffer{}
-	h := GetSessionWebPage(w,r)
+	h := main.GetSessionWebPage(w,r, appcontext)
 	if err := templates.ExecuteTemplate(b, "myaccount.html", h); err != nil {
 		//writeError(w, r, err)
 		return
@@ -86,6 +99,63 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 
 
 
+func handleVehicles(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	//session, _ := appcontext.Store.Get(r, "jaegersignup")
+	//appcontext := context.GetContext()
+
+    q := datastore.NewQuery("Vehicle")
+            //.Ancestor(appcontext.UserKey)
+
+    //panic(appcontext)
+
+    var vehicles []inv.VehicleEntity
+    _, err := q.GetAll(c, &vehicles)
+    //panic(vehicles)
+    if err != nil {
+    	panic(err)
+    }
+
+	b := &bytes.Buffer{}
+	h := main.GetSessionWebPage(w,r,appcontext)
+	h.Vehicles = vehicles
+	//panic(h)
+	if err := templates.ExecuteTemplate(b, "vehicles.html", h); err != nil {
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
+
+}
+
+func handleVehicleEdit(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	name := params["name"]
+	_ = name
+
+	if r.Method == "POST" {
+		/*
+		b := &bytes.Buffer{}
+		h := GetSessionWebPage(w,r,appcontext)
+		if err := templates.ExecuteTemplate(b, "vehicleedit.html", h); err != nil {
+			//writeError(w, r, err)
+			return
+		}
+		b.WriteTo(w)
+		*/
+		medit := fmt.Sprintf("/vehicle/%v/edit",name)
+		http.Redirect(w,r,medit,301)
+		return
+	}
+
+	b := &bytes.Buffer{}
+	h := main.GetSessionWebPage(w,r,appcontext)
+	if err := templates.ExecuteTemplate(b, "vehicleedit.html", h); err != nil {
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
+}
 
 func handleVehicleCreate(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
@@ -93,18 +163,25 @@ func handleVehicleCreate(w http.ResponseWriter, r *http.Request) {
 	_ = name
 
 	if r.Method == "POST" {
+		/*
 		b := &bytes.Buffer{}
-		h := GetSessionWebPage(w,r)
+		h := GetSessionWebPage(w,r,appcontext)
 		if err := templates.ExecuteTemplate(b, "vehicleedit.html", h); err != nil {
 			//writeError(w, r, err)
 			return
 		}
 		b.WriteTo(w)
+		*/
+
+		inv.AddVehicleEntity(r,appcontext)
+
+		medit := fmt.Sprintf("/vehicle/%v/edit",name)
+		http.Redirect(w,r,medit,301)
 		return
 	}
 
 	b := &bytes.Buffer{}
-	h := GetSessionWebPage(w,r)
+	h := main.GetSessionWebPage(w,r,appcontext)
 	if err := templates.ExecuteTemplate(b, "vehiclecreate.html", h); err != nil {
 		//writeError(w, r, err)
 		return
@@ -118,7 +195,7 @@ func handleInvItm(w http.ResponseWriter, r *http.Request) {
 	name := params["name"]
 	_ = name
 	b := &bytes.Buffer{}
-	h := GetSessionWebPage(w,r)
+	h := main.GetSessionWebPage(w,r,appcontext)
 	if err := templates.ExecuteTemplate(b, "invitm.html", h); err != nil {
 		//writeError(w, r, err)
 		return
@@ -127,32 +204,10 @@ func handleInvItm(w http.ResponseWriter, r *http.Request) {
 }
 
 
-type WebPage struct {
-	UserName 	string
-	Email 		string
-	NavBar 		string
-}
 
-func GetSessionWebPage(w http.ResponseWriter, r *http.Request) WebPage {
-	var h WebPage
-	session, _ := store.Get(r, "jaegersignup")
-	var name string 
-	var email string
-	var navbar string 
-	if len(session.Values) > 0 {
-		name = session.Values["UserName"].(string)
-		email = session.Values["Email"].(string)
-		navbar = "navbar.html"
-		//if len(name) == 0  {
-		//	name = "Undefined Name"
-		//}
-		h = WebPage{UserName:name, Email:email, NavBar:navbar}
-	} 
-	return h
-}
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
-	h := GetSessionWebPage(w,r)
+	h := main.GetSessionWebPage(w,r,appcontext)
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "index.html", h); err != nil {
 		//writeError(w, r, err)
@@ -163,7 +218,7 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 
 
 func handleSignUpGood(w http.ResponseWriter, r *http.Request) {
-	h := GetSessionWebPage(w,r)
+	h := main.GetSessionWebPage(w,r,appcontext)
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "template1/signupgood.html", h); err != nil {
 		//writeError(w, r, err)
@@ -174,6 +229,13 @@ func handleSignUpGood(w http.ResponseWriter, r *http.Request) {
 }
 
 
+func handleSignout(w http.ResponseWriter, r *http.Request) {
+	session, _ := appcontext.Store.Get(r, "jaegersignup")
+	session.Values["Email"] = ""
+	session.Values["UserName"] = ""
+	session.Save(r, w)
+	http.Redirect(w,r,"/",301)
+}
 
 func handleSignIn(w http.ResponseWriter, r *http.Request) {
 
@@ -192,21 +254,22 @@ func handleSignIn(w http.ResponseWriter, r *http.Request) {
 		u.Email = email
 		u.Password = pwd
 
-		ok, usr := users.SignIn(u, r)
+		ok, usr := users.SignIn(u, w, r,appcontext)
+		_ = usr
 
 		if ok {
 
-			session, _ := store.Get(r, "jaegersignup")
-			session.Values["Email"] = usr.Email
-			session.Values["UserName"] = usr.UserName
-			session.Save(r, w)
+			//session, _ := appcontext.Store.Get(r, "jaegersignup")
+			//session.Values["Email"] = usr.Email
+			//session.Values["UserName"] = usr.UserName
+			//session.Save(r, w)
 			http.Redirect(w,r,"/",301)
 		}
 	}
 }
 
 func handleSignUp(w http.ResponseWriter, r *http.Request) {
-	h := GetSessionWebPage(w,r)
+	h := main.GetSessionWebPage(w,r,appcontext)
 	if r.Method == "POST" {
 		
 		email := r.FormValue("email")
@@ -258,7 +321,7 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleAbout(w http.ResponseWriter, r *http.Request) {
-	h := GetSessionWebPage(w,r)
+	h := main.GetSessionWebPage(w,r,appcontext)
 	
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "about.html", h); err != nil {
@@ -269,7 +332,7 @@ func handleAbout(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleContact(w http.ResponseWriter, r *http.Request) {
-	h := GetSessionWebPage(w,r)
+	h := main.GetSessionWebPage(w,r,appcontext)
 	
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "contact.html", h); err != nil {
@@ -280,7 +343,7 @@ func handleContact(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleError(w http.ResponseWriter, r *http.Request) {
-	h := GetSessionWebPage(w,r)
+	h := main.GetSessionWebPage(w,r,appcontext)
 	
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "error.html", h); err != nil {

@@ -12,9 +12,11 @@ import (
 	"appengine/datastore"
 	"appengine"
 	//"github.com/gorilla/sessions"
+	"api/context"
 )
 
-func SignIn(u *User, r *http.Request) (bool, *User) {
+func SignIn(u *User, w http.ResponseWriter, r *http.Request, appcontext *context.Context) (bool, *User) {
+
 
 	c := appengine.NewContext(r)
 
@@ -43,6 +45,18 @@ func SignIn(u *User, r *http.Request) (bool, *User) {
         if x.Password == u.Password {
         	u.UserName = x.UserName
         	u.Email = x.Email
+        	u.KeyIdInt = key.IntID()
+        	u.KeyIdString = key.StringID()
+
+        	//appcontext := context.GetContext()
+        	//appcontext.SetUserKey(key)
+        	//appcontext.UserKey = key
+        	session, _ := appcontext.Store.Get(r, "jaegersignup")
+			session.Values["Email"] = u.Email
+			session.Values["UserName"] = u.UserName        	
+        	session.Save(r, w)
+        	//appcontext = context.GetContext()
+        	//panic(key)
 	        return true, u
 	    }
 

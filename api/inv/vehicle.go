@@ -21,6 +21,7 @@ type VehicleEntity struct {
 	ModelCode 					string
 	TrimCode 					string
 	KeyName 					string
+	KeyId 						string
 }
 
 
@@ -52,14 +53,15 @@ func AddVehicleEntity(r *http.Request, appcontext *context.Context) (*datastore.
 
 	apengcontext := appengine.NewContext(r)
 
-	rnd := context.RandSeq(32)
+	rndKey := context.RandSeq(32)
 
-	key := datastore.NewKey(apengcontext, "Vehicle", rnd, 0, userKey)
+	key := datastore.NewKey(apengcontext, "Vehicle", rndKey, 0, userKey)
 	entity := new(VehicleEntity)
 	entity.ManufacturerCode = manu
 	entity.ModelCode = model
 	entity.TrimCode = trim
 	entity.KeyName = key.String()
+	entity.KeyId = rndKey
 	//panic(entity)
 
 

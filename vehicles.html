@@ -2,17 +2,28 @@
 
 [[template "navbar" .]]
 
-    <br><br><br>
-
+<hr class="featurette-divider">
 
   <div class="container">    
-      <div class="col-sm-6 col-md-4">
-        [[range $v := .Vehicles]]
-          <h3>[[$v.ManufacturerCode]]</h3>
-          <p>[[$v.ModelCode]], [[$v.TrimCode]]</p>
-        [[end]]
-      </div>
+    [[range $v := .Vehicles]]
+          <div class="col-lg-6 col-md-4">
+            <div class="thumbnail">
+              <img data-holder-rendered="true" src="http://placehold.it/300x200" style="height: 200px; width: 100%; display: block;" data-src="holder.js/100%x200" alt="100%x200">
+              <h3>[[$v.ManufacturerCode]]</h3>
+              <p>[[$v.ModelCode]], [[$v.TrimCode]]</p>
+              <p>[[$v.KeyName]]</p>
+
+              <div class="caption">
+                <a class="btn btn-large btn-primary" href="#">Edit</a>
+                <a class="btn btn-large btn-primary" href="#">Delete</a>
+              </div>
+
+            </div>
+          </div>
+    [[end]]
   </div>
+
+<hr class="featurette-divider">
 
     <script>
         $('.typeahead').typeahead();

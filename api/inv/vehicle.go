@@ -20,6 +20,7 @@ type VehicleEntity struct {
 	ManufacturerCode  			string
 	ModelCode 					string
 	TrimCode 					string
+	KeyName 					string
 }
 
 
@@ -29,6 +30,7 @@ func NewVehicleEntity() *VehicleEntity {
 }
 
 func AddVehicleEntity(r *http.Request, appcontext *context.Context) (*datastore.Key, bool) {
+	c := appengine.NewContext(r)
 
 	manu := r.FormValue("manu")
 	model := r.FormValue("model")
@@ -42,19 +44,26 @@ func AddVehicleEntity(r *http.Request, appcontext *context.Context) (*datastore.
 	//appcontext := context.GetContext()
 	//session, _ := appcontext.Store.Get(r, "jaegersignup")
 	//panic(session.Values)
-	userKey := appcontext.UserKey
+	//userKey := appcontext.UserKey
 
-	context := appengine.NewContext(r)
+	session, _ := appcontext.Store.Get(r, "jaegersignup")
+	email := session.Values["Email"].(string)
+	userKey := datastore.NewKey(c, "User", email, 0, nil)	
 
-	key := datastore.NewIncompleteKey(context, "Vehicle", userKey)
-	
+	apengcontext := appengine.NewContext(r)
+
+	rnd := context.RandSeq(32)
+
+	key := datastore.NewKey(apengcontext, "Vehicle", rnd, 0, userKey)
 	entity := new(VehicleEntity)
 	entity.ManufacturerCode = manu
 	entity.ModelCode = model
 	entity.TrimCode = trim
+	entity.KeyName = key.String()
+	//panic(entity)
 
 
-	keyVehicle, err := datastore.Put(context, key, entity)
+	keyVehicle, err := datastore.Put(apengcontext, key, entity)
 	if err != nil {
 		panic(err)
         //http.Error(w, err.Error(), http.StatusInternalServerError)

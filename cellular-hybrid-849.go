@@ -45,6 +45,7 @@ var (
 var store *sessions.CookieStore //= sessions.NewCookieStore([]byte("something-very-secret"))
 
 var appcontext *context.Context
+var userkey *datastore.Key
 
 func init() {
 	appcontext = context.NewContext()
@@ -104,8 +105,13 @@ func handleVehicles(w http.ResponseWriter, r *http.Request) {
 	//session, _ := appcontext.Store.Get(r, "jaegersignup")
 	//appcontext := context.GetContext()
 
-    q := datastore.NewQuery("Vehicle")
-            //.Ancestor(appcontext.UserKey)
+	//panic(userkey)
+	session, _ := appcontext.Store.Get(r, "jaegersignup")
+	email := session.Values["Email"].(string)
+	k := datastore.NewKey(c, "User", email, 0, nil)
+	//panic(k)
+	_=k
+    q := datastore.NewQuery("Vehicle").Ancestor(k)
 
     //panic(appcontext)
 
@@ -254,9 +260,10 @@ func handleSignIn(w http.ResponseWriter, r *http.Request) {
 		u.Email = email
 		u.Password = pwd
 
-		ok, usr := users.SignIn(u, w, r,appcontext)
+		ok, usr, uk := users.SignIn(u, w, r,appcontext)
 		_ = usr
-
+		userkey = uk
+		//panic(userkey)
 		if ok {
 
 			//session, _ := appcontext.Store.Get(r, "jaegersignup")

@@ -15,13 +15,13 @@ import (
 	"api/context"
 )
 
-func SignIn(u *User, w http.ResponseWriter, r *http.Request, appcontext *context.Context) (bool, *User) {
+func SignIn(u *User, w http.ResponseWriter, r *http.Request, appcontext *context.Context) (bool, *User, *datastore.Key) {
 
 
 	c := appengine.NewContext(r)
 
 	if EmailExists(u, r) == false {
-		return false, nil
+		return false, nil, nil
 	}
 
 
@@ -34,7 +34,7 @@ func SignIn(u *User, w http.ResponseWriter, r *http.Request, appcontext *context
 		_ = err
         if err == datastore.Done {
         		//panic("Done")
-        		return false, nil
+        		return false, nil, nil
                 break // No further entities match the query.
         }
         if err != nil {
@@ -57,12 +57,12 @@ func SignIn(u *User, w http.ResponseWriter, r *http.Request, appcontext *context
         	session.Save(r, w)
         	//appcontext = context.GetContext()
         	//panic(key)
-	        return true, u
+	        return true, u, key
 	    }
 
 	}
 
-	return false, nil
+	return false, nil, nil
 
 
 }

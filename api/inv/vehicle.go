@@ -38,7 +38,7 @@ func AddVehicleEntity(r *http.Request, appcontext *context.Context) (*datastore.
 	trim := r.FormValue("trim")
 
 	if len(manu) == 0 || len(model) == 0 || len(trim) == 0 {
-		panic("manu model or trim cannot be empty")
+		//panic("manu model or trim cannot be empty")
 		return nil, false
 	}
 
@@ -67,7 +67,7 @@ func AddVehicleEntity(r *http.Request, appcontext *context.Context) (*datastore.
 
 	keyVehicle, err := datastore.Put(apengcontext, key, entity)
 	if err != nil {
-		panic(err)
+		//panic(err)
         //http.Error(w, err.Error(), http.StatusInternalServerError)
         return nil, false
     }	

@@ -57,7 +57,7 @@ func init() {
 	http.HandleFunc("/signup/good", handleSignUpGood)
 	http.HandleFunc("/about", handleAbout)
 	http.HandleFunc("/contact", handleContact)
-	http.HandleFunc("/error", handleError)
+	rtr.HandleFunc("/error", handleError).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/myaccount", handleProfile).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/signout", handleSignout).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/vehicles", handleVehicles).Methods("GET","POST")
@@ -179,7 +179,11 @@ func handleVehicleCreate(w http.ResponseWriter, r *http.Request) {
 		b.WriteTo(w)
 		*/
 
-		inv.AddVehicleEntity(r,appcontext)
+		key, ok := inv.AddVehicleEntity(r,appcontext)
+		_=key
+		if !ok {
+			http.Redirect(w,r,"/error",301)
+		}
 
 		medit := fmt.Sprintf("/vehicle/%v/edit",name)
 		http.Redirect(w,r,medit,301)
@@ -216,6 +220,7 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 	h := main.GetSessionWebPage(w,r,appcontext)
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "index.html", h); err != nil {
+		http.Redirect(w,r,"/error",301)
 		//writeError(w, r, err)
 		return
 	}
@@ -227,6 +232,7 @@ func handleSignUpGood(w http.ResponseWriter, r *http.Request) {
 	h := main.GetSessionWebPage(w,r,appcontext)
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "template1/signupgood.html", h); err != nil {
+		http.Redirect(w,r,"/error",301)
 		//writeError(w, r, err)
 		return
 	}
@@ -272,6 +278,7 @@ func handleSignIn(w http.ResponseWriter, r *http.Request) {
 			//session.Save(r, w)
 			http.Redirect(w,r,"/",301)
 		}
+		http.Redirect(w,r,"/error",301)
 	}
 }
 
@@ -301,6 +308,7 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 		if users.SignUp(u, r) {
 			b := &bytes.Buffer{}
 			if err := templates.ExecuteTemplate(b, "signupgood.html", h); err != nil {
+				http.Redirect(w,r,"/error",301)
 				panic(err)
 				//writeError(w, r, err)
 				return
@@ -309,6 +317,7 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 		} else {
 			b := &bytes.Buffer{}
 			if err := templates.ExecuteTemplate(b, "signupinvalid.html", h); err != nil {
+				http.Redirect(w,r,"/error",301)
 				panic(err)
 				//writeError(w, r, err)
 				return
@@ -320,6 +329,7 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		b := &bytes.Buffer{}
 		if err := templates.ExecuteTemplate(b, "signup.html", h); err != nil {
+			http.Redirect(w,r,"/error",301)
 			//writeError(w, r, err)
 			return
 		}
@@ -332,6 +342,7 @@ func handleAbout(w http.ResponseWriter, r *http.Request) {
 	
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "about.html", h); err != nil {
+		http.Redirect(w,r,"/error",301)
 		//writeError(w, r, err)
 		return
 	}
@@ -343,6 +354,7 @@ func handleContact(w http.ResponseWriter, r *http.Request) {
 	
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "contact.html", h); err != nil {
+		http.Redirect(w,r,"/error",301)
 		//writeError(w, r, err)
 		return
 	}
@@ -354,6 +366,7 @@ func handleError(w http.ResponseWriter, r *http.Request) {
 	
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "error.html", h); err != nil {
+		//http.Redirect(w,r,"/error",301)
 		//writeError(w, r, err)
 		return
 	}

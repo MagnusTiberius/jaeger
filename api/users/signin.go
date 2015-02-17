@@ -38,6 +38,7 @@ func SignIn(u *User, w http.ResponseWriter, r *http.Request, appcontext *context
                 break // No further entities match the query.
         }
         if err != nil {
+        		return false, nil, nil
         		panic(err)
                 c.Errorf("fetching next Person: %v", err)
                 break

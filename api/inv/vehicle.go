@@ -12,6 +12,7 @@ import (
 	//"github.com/gorilla/sessions"
 	//"github.com/gorilla/sessions"
 	"api/context"
+
 	"appengine/datastore"
 	"appengine"	
 )
@@ -81,4 +82,20 @@ func GetUserVehicles() []VehicleEntity {
 	vehicles = []VehicleEntity{}
 
 	return vehicles
+}
+
+func GetFfeaturedVehicles(r *http.Request, appcontext *context.Context) []VehicleEntity {
+	c := appengine.NewContext(r)
+
+	q := datastore.NewQuery("Vehicle")
+
+    var vehicles []VehicleEntity
+    _, err := q.GetAll(c, &vehicles)
+    //panic(vehicles)
+    if err != nil {
+    	panic(err)
+    }
+
+    return vehicles
+
 }

@@ -218,6 +218,10 @@ func handleInvItm(w http.ResponseWriter, r *http.Request) {
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
 	h := main.GetSessionWebPage(w,r,appcontext)
+
+	vehicles := inv.GetFfeaturedVehicles(r,appcontext)
+	h.Vehicles = vehicles
+
 	b := &bytes.Buffer{}
 	if err := templates.ExecuteTemplate(b, "index.html", h); err != nil {
 		http.Redirect(w,r,"/error",301)

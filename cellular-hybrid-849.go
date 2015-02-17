@@ -38,6 +38,7 @@ var (
 		"maindocftr.html",
 		"vehiclecreate.html",
 		"vehicleedit.html",
+		"vehicleview.html",
 		"vehicles.html",
 	))
 )
@@ -64,6 +65,7 @@ func init() {
 	rtr.HandleFunc("/entity/{name:[a-z]+}/create", handleInvItm).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-z]+}/create", handleVehicleCreate).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-z]+}/edit", handleVehicleEdit).Methods("GET","POST")
+	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/view", handleVehicleView).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
 	http.Handle("/", rtr)
 	/*
@@ -127,10 +129,36 @@ func handleVehicles(w http.ResponseWriter, r *http.Request) {
 	h.Vehicles = vehicles
 	//panic(h)
 	if err := templates.ExecuteTemplate(b, "vehicles.html", h); err != nil {
+		http.Redirect(w,r,"/error",301)
 		//writeError(w, r, err)
 		return
 	}
 	b.WriteTo(w)
+
+}
+
+
+
+func handleVehicleView(w http.ResponseWriter, r *http.Request) {
+	//c := appengine.NewContext(r)
+	params := mux.Vars(r)
+	name := params["name"]
+	_ = name
+	b := &bytes.Buffer{}
+	h := main.GetSessionWebPage(w,r,appcontext)
+	vehicles := inv.GetVehiclesByKey(r,appcontext,name)
+	if len(vehicles) > 0 {
+		h.Vehicle = vehicles[0]
+		if err := templates.ExecuteTemplate(b, "vehicleview.html", h); err != nil {
+			http.Redirect(w,r,"/error",301)
+			//writeError(w, r, err)
+			panic(err)
+			return
+		}
+		b.WriteTo(w)
+	} else {
+		http.Redirect(w,r,"/error",301)
+	}
 
 }
 

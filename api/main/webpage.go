@@ -20,6 +20,7 @@ type WebPage struct {
 	Email 		string
 	NavBar 		string
 	Vehicles    []inv.VehicleEntity
+	Vehicle     inv.VehicleEntity
 }
 
 func GetSessionWebPage(w http.ResponseWriter, r *http.Request, appcontext *context.Context) WebPage {

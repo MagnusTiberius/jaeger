@@ -99,3 +99,21 @@ func GetFfeaturedVehicles(r *http.Request, appcontext *context.Context) []Vehicl
     return vehicles
 
 }
+
+func GetVehiclesByKey(r *http.Request, appcontext *context.Context, skey string) []VehicleEntity {
+    var vehicles []VehicleEntity
+	c := appengine.NewContext(r)
+	//apengcontext := appengine.NewContext(r)
+	//key := datastore.NewKey(apengcontext, "Vehicle", skey, 0, nil)
+
+	q := datastore.NewQuery("Vehicle").
+			Filter("KeyId =", skey)
+    _,err := q.GetAll(c, &vehicles)
+    //panic(vehicles)
+    if err != nil {
+    	panic(err)
+    }
+
+    return vehicles
+
+}

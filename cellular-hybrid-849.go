@@ -257,10 +257,14 @@ func handleSignIn(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 		pwd := r.FormValue("passwd")
 		if len(email) == 0 {
-			panic("email is empty")
+			http.Redirect(w,r,"/error",301)
+			//panic("email is empty")
+			return
 		}
 		if len(pwd) == 0 {
-			panic("pwd is empty")
+			http.Redirect(w,r,"/error",301)
+			//panic("pwd is empty")
+			return
 		}
 		u := users.NewUser()
 		u.Email = email
@@ -291,13 +295,19 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 		uname := r.FormValue("username") 
 
 		if len(email) == 0 {
-			panic("email is empty")
+			http.Redirect(w,r,"/error",301)
+			return
+			//panic("email is empty")
 		}
 		if len(pwd) == 0 {
-			panic("pwd is empty")
+			http.Redirect(w,r,"/error",301)
+			return
+			//panic("pwd is empty")
 		}
 		if len(uname) == 0 {
-			panic("uname is empty")
+			http.Redirect(w,r,"/error",301)
+			return
+			//panic("uname is empty")
 		}
 		u := users.NewUser()
 		u.Email = email

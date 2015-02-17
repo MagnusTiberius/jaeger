@@ -27,7 +27,7 @@ func SignUp(u *User, r *http.Request) bool {
 	
 	_, err := datastore.Put(c, k, u)
 	if err != nil {
-		panic(err)
+		//panic(err)
         //http.Error(w, err.Error(), http.StatusInternalServerError)
         return false
     }	

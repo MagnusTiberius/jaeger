@@ -54,8 +54,7 @@ func (v *CarouselEntity) Save(r *http.Request, parentkey *datastore.Key) {
 
 func  GetAll(r *http.Request, parentkey *datastore.Key) []CarouselEntity {
 	c := appengine.NewContext(r)
-	_=c
-	q := datastore.NewQuery("Vehicle").Ancestor(parentkey)
+	q := datastore.NewQuery("Carousel").Ancestor(parentkey)
 	var arr []CarouselEntity
 	_,err := q.GetAll(c, &arr)
 	if err != nil {
@@ -67,7 +66,7 @@ func  GetAll(r *http.Request, parentkey *datastore.Key) []CarouselEntity {
 func  Get(r *http.Request, skey string) []CarouselEntity {
 	c := appengine.NewContext(r)
 	_=c
-	q := datastore.NewQuery("Vehicle").Filter("KeyId =", skey)
+	q := datastore.NewQuery("Carousel").Filter("KeyId =", skey)
 	var arr []CarouselEntity
 	_,err := q.GetAll(c, &arr)
 	if err != nil {
@@ -75,3 +74,31 @@ func  Get(r *http.Request, skey string) []CarouselEntity {
 	}
 	return arr
 }
+
+
+func  DeleteByParentKey(r *http.Request, parentkey *datastore.Key) bool {
+	c := appengine.NewContext(r)
+	keys, err := datastore.NewQuery("Carousel").
+				KeysOnly().
+				Ancestor(parentkey).
+				GetAll(c, nil)
+	if err != nil {
+		panic(err)
+	}
+	datastore.DeleteMulti(c, keys)
+	return true
+}
+
+func  DeleteByKey(r *http.Request, skey string) bool {
+	c := appengine.NewContext(r)
+	keys, err := datastore.NewQuery("Carousel").
+					KeysOnly().
+					Filter("KeyId =", skey).
+					GetAll(c, nil)
+	if err != nil {
+		panic(err)
+	}
+	datastore.DeleteMulti(c, keys)
+	return true
+}
+

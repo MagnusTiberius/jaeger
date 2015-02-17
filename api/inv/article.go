@@ -7,43 +7,43 @@ import (
 	"appengine"	
 )
 
-type CarouselEntity struct {
+type ArticleEntity struct {
 	KeyId  		string
 	ImgUrl 		string
 	Caption  	string
-	Heading 	string
+	Title 		string
 	Content	 	string
 }
 
-func NewCarouselEntity(r *http.Request, parentkey *datastore.Key) *CarouselEntity {
-	v := new(CarouselEntity)
+func NewArticleEntity(r *http.Request, parentkey *datastore.Key) *ArticleEntity {
+	v := new(ArticleEntity)
 	v.KeyId = context.RandSeq(32)
 	return v
 }
 
 
-func (v *CarouselEntity) Set(imgUrl string, caption string, heading string, content string) {
+func (v *ArticleEntity) Set(imgUrl string, caption string, heading string, content string) {
 	v.ImgUrl = imgUrl
 	v.Caption = caption
-	v.Heading = heading
+	v.Title = heading
 	v.Content = content
 }
 
 
-func (v *CarouselEntity) SetValue(e *CarouselEntity) {
+func (v *ArticleEntity) SetValue(e *ArticleEntity) {
 	v.ImgUrl = v.ImgUrl
 	v.Caption = v.Caption
-	v.Heading = v.Heading
+	v.Title = v.Title
 	v.Content = v.Content
 }
 
-func (v *CarouselEntity) Save(r *http.Request, parentkey *datastore.Key) {
+func (v *ArticleEntity) Save(r *http.Request, parentkey *datastore.Key) {
 	apengcontext := appengine.NewContext(r)
-	key := datastore.NewKey(apengcontext, "Carousel", v.KeyId, 0, parentkey)
-	entity := new(CarouselEntity)
+	key := datastore.NewKey(apengcontext, "Article", v.KeyId, 0, parentkey)
+	entity := new(ArticleEntity)
 	entity.ImgUrl = v.ImgUrl
 	entity.Caption = v.Caption
-	entity.Heading = v.Heading
+	entity.Title = v.Title
 	entity.Content = v.Content
 	_, err := datastore.Put(apengcontext, key, entity)
 	if err != nil {
@@ -52,10 +52,10 @@ func (v *CarouselEntity) Save(r *http.Request, parentkey *datastore.Key) {
 }
 
 
-func  (v *CarouselEntity) GetAll(r *http.Request, parentkey *datastore.Key) []CarouselEntity {
+func  (v *ArticleEntity) GetAll(r *http.Request, parentkey *datastore.Key) []ArticleEntity {
 	c := appengine.NewContext(r)
-	q := datastore.NewQuery("Carousel").Ancestor(parentkey)
-	var arr []CarouselEntity
+	q := datastore.NewQuery("Article").Ancestor(parentkey)
+	var arr []ArticleEntity
 	_,err := q.GetAll(c, &arr)
 	if err != nil {
 		panic(err)
@@ -63,11 +63,11 @@ func  (v *CarouselEntity) GetAll(r *http.Request, parentkey *datastore.Key) []Ca
 	return arr
 }
 
-func (v *CarouselEntity)  Get(r *http.Request, skey string) []CarouselEntity {
+func  (v *ArticleEntity) Get(r *http.Request, skey string) []ArticleEntity {
 	c := appengine.NewContext(r)
 	_=c
-	q := datastore.NewQuery("Carousel").Filter("KeyId =", skey)
-	var arr []CarouselEntity
+	q := datastore.NewQuery("Article").Filter("KeyId =", skey)
+	var arr []ArticleEntity
 	_,err := q.GetAll(c, &arr)
 	if err != nil {
 		panic(err)
@@ -76,9 +76,9 @@ func (v *CarouselEntity)  Get(r *http.Request, skey string) []CarouselEntity {
 }
 
 
-func (v *CarouselEntity)  DeleteByParentKey(r *http.Request, parentkey *datastore.Key) bool {
+func (v *ArticleEntity)  DeleteByParentKey(r *http.Request, parentkey *datastore.Key) bool {
 	c := appengine.NewContext(r)
-	keys, err := datastore.NewQuery("Carousel").
+	keys, err := datastore.NewQuery("Article").
 				KeysOnly().
 				Ancestor(parentkey).
 				GetAll(c, nil)
@@ -89,9 +89,9 @@ func (v *CarouselEntity)  DeleteByParentKey(r *http.Request, parentkey *datastor
 	return true
 }
 
-func (v *CarouselEntity)  DeleteByKey(r *http.Request, skey string) bool {
+func  (v *ArticleEntity) DeleteByKey(r *http.Request, skey string) bool {
 	c := appengine.NewContext(r)
-	keys, err := datastore.NewQuery("Carousel").
+	keys, err := datastore.NewQuery("Article").
 					KeysOnly().
 					Filter("KeyId =", skey).
 					GetAll(c, nil)

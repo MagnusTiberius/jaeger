@@ -20,6 +20,7 @@ import (
  	"api/main"
 	"appengine/datastore"
 	"appengine"	 	
+	"appengine/blobstore"
 )
 
 var (
@@ -40,6 +41,7 @@ var (
 		"vehicleedit.html",
 		"vehicleview.html",
 		"vehicles.html",
+		"upload.html",
 	))
 )
 
@@ -67,24 +69,52 @@ func init() {
 	rtr.HandleFunc("/vehicle/{name:[a-z]+}/edit", handleVehicleEdit).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/view", handleVehicleView).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
+	rtr.HandleFunc("/upload", handleUpload).Methods("GET","POST")
+	rtr.HandleFunc("/uploadcomplete", handleUploadComplete).Methods("GET","POST")
+	rtr.HandleFunc("/blob/", handleBlob).Methods("GET","POST")
 	http.Handle("/", rtr)
-	/*
-	indexTmpl := template.New("").Delims("<<", ">>")
-	indexTmpl,_ = indexTmpl.ParseFiles(
-			"index.html",
-			"signup.html",
-			"about.html",
-			"contact.html",
-			"error.html",
-		)	
-	templates = template.Must(indexTmpl.ParseFiles(
-			"index.html",
-			"signup.html",
-			"about.html",
-			"contact.html",
-			"error.html",
-		))
-		*/
+
+}
+
+
+func handleUpload(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+
+    uploadURL, err := blobstore.UploadURL(c, "/uploadcomplete2", nil)
+    if err != nil {
+            panic(err)
+            return
+    }
+
+	b := &bytes.Buffer{}
+	h := main.GetSessionWebPage(w,r, appcontext)
+	h.UploadURL = uploadURL
+	if err := templates.ExecuteTemplate(b, "upload.html", h); err != nil {
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
+}
+
+
+func handleUploadComplete(w http.ResponseWriter, r *http.Request) {
+	//c := appengine.NewContext(r)
+
+    blobs, _, err := blobstore.ParseUpload(r)
+    if err != nil {
+            panic(err)
+            return
+    }
+    file := blobs["file"]
+    if len(file) == 0 {
+    	panic("file invalid")
+    }
+    http.Redirect(w, r, "/blob/?blobKey="+string(file[0].BlobKey), http.StatusFound)
+}
+
+
+func handleBlob(w http.ResponseWriter, r *http.Request) {
+	blobstore.Send(w, appengine.BlobKey(r.FormValue("blobKey")))
 }
 
 func handleProfile(w http.ResponseWriter, r *http.Request) {

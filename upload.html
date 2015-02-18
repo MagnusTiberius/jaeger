@@ -1,0 +1,24 @@
+[[template "maindochdr" .]]
+
+[[template "navbar" .]]
+
+<hr class="featurette-divider">
+
+    <div class="container">
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+
+        <form action="[[.UploadURL]]" method="POST" enctype="multipart/form-data">
+        Upload File: <input type="file" name="file"><br>
+        <input type="submit" name="submit" value="Submit">
+        </form>
+
+
+      </div>
+
+    </div> <!-- /container -->
+
+<hr class="featurette-divider">
+
+[[template "maindocftr" .]]

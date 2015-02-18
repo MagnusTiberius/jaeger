@@ -13,6 +13,10 @@ import (
 	//"github.com/gorilla/sessions"
 	"api/context"
 	"api/inv"
+	//"appengine/blobstore"
+	//"appengine/urlfetch"
+	//"appengine"
+	"net/url"
 )
 
 type WebPage struct {
@@ -21,6 +25,7 @@ type WebPage struct {
 	NavBar 		string
 	Vehicles    []inv.VehicleEntity
 	Vehicle     inv.VehicleEntity
+	UploadURL   *url.URL
 }
 
 func GetSessionWebPage(w http.ResponseWriter, r *http.Request, appcontext *context.Context) WebPage {

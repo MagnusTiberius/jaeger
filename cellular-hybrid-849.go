@@ -21,6 +21,8 @@ import (
 	"appengine/datastore"
 	"appengine"	 	
 	"appengine/blobstore"
+	wsusers "api/ws/wsusers"
+	"encoding/json"
 )
 
 var (
@@ -42,6 +44,7 @@ var (
 		"vehicleview.html",
 		"vehicles.html",
 		"upload.html",
+		"userlist.html",
 	))
 )
 
@@ -61,6 +64,7 @@ func init() {
 	http.HandleFunc("/about", handleAbout)
 	http.HandleFunc("/contact", handleContact)
 	rtr.HandleFunc("/error", handleError).Methods("GET","POST")
+	rtr.HandleFunc("/user/list", handleUserList).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/myaccount", handleProfile).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/signout", handleSignout).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/vehicles", handleVehicles).Methods("GET","POST")
@@ -72,15 +76,40 @@ func init() {
 	rtr.HandleFunc("/upload", handleUpload).Methods("GET","POST")
 	rtr.HandleFunc("/uploadcomplete", handleUploadComplete).Methods("GET","POST")
 	rtr.HandleFunc("/blob/", handleBlob).Methods("GET","POST")
+
+	rtr.HandleFunc("/ws/user/list", handleWsUserList).Methods("GET","POST")
+
 	http.Handle("/", rtr)
 
 }
 
 
+func handleWsUserList(w http.ResponseWriter, r *http.Request) {
+	list := wsusers.HandleWsUserList(w,r)
+	js, err := json.Marshal(list)
+	if err != nil {
+		panic(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
+}
+
+func handleUserList(w http.ResponseWriter, r *http.Request) {
+	h := main.GetSessionWebPage(w,r,appcontext)
+
+	b := &bytes.Buffer{}
+	if err := templates.ExecuteTemplate(b, "userlist.html", h); err != nil {
+		http.Redirect(w,r,"/error",301)
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
+}
+
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
-    uploadURL, err := blobstore.UploadURL(c, "/uploadcomplete2", nil)
+    uploadURL, err := blobstore.UploadURL(c, "/uploadcomplete", nil)
     if err != nil {
             panic(err)
             return

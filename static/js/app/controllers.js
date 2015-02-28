@@ -23,7 +23,7 @@ jaegerApp.controller('itemController', function ($scope) {
 });
 
 
-jaegerApp.controller('CarouselCtrlr', function($scope) {
+jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) {
   var json = {
     "items":
         [
@@ -50,15 +50,67 @@ jaegerApp.controller('CarouselCtrlr', function($scope) {
   };
   
   $scope.list = json;
+
+  $scope.files = [];
+
+  //listen for the file selected event
+  $scope.$on("fileSelected", function (event, args) {
+      $scope.$apply(function () {            
+          //add the file object to the scope's files collection
+          $scope.files.push(args.file);
+      });
+  });  
   
   $scope.getRandomNum = function(){
     return Math.floor((Math.random()*9999999)+1);
   } 
  
-  $scope.upload = function(event) {
+  $scope.upload2 = function(event) {
     debugger
     alert(event.target.id);
   };
+
+  //the save method
+  $scope.upload = function() {
+      $http({
+          method: 'POST',
+          url: "/Api/PostStuff",
+          //IMPORTANT!!! You might think this should be set to 'multipart/form-data' 
+          // but this is not true because when we are sending up files the request 
+          // needs to include a 'boundary' parameter which identifies the boundary 
+          // name between parts in this multi-part request and setting the Content-type 
+          // manually will not set this boundary parameter. For whatever reason, 
+          // setting the Content-type to 'false' will force the request to automatically
+          // populate the headers properly including the boundary parameter.
+          headers: { 'Content-Type': undefined },
+          //This method will allow us to change how the data is sent up to the server
+          // for which we'll need to encapsulate the model data in 'FormData'
+          transformRequest: function (data) {
+              var formData = new FormData();
+              //need to convert our json object to a string version of json otherwise
+              // the browser will do a 'toString()' on the object which will result 
+              // in the value '[Object object]' on the server.
+              formData.append("model", angular.toJson(data.model));
+              //now add all of the assigned files
+              for (var i = 0; i < data.files; i++) {
+                  //add each file to the form data and iteratively name them
+                  formData.append("file" + i, data.files[i]);
+              }
+              return formData;
+          },
+          //Create an object that contains the model and files which will be transformed
+          // in the above transformRequest method
+          data: { model: $scope.model, files: $scope.files }
+      }).
+      success(function (data, status, headers, config) {
+          alert("success!");
+      }).
+      error(function (data, status, headers, config) {
+          alert("failed!");
+      });
+  };  
+
+
   $scope.delete = function(item) {
     debugger
     var index=$scope.list.items.indexOf(item);
@@ -74,7 +126,7 @@ jaegerApp.controller('CarouselCtrlr', function($scope) {
     $scope.list.items.push(newitm);
   };
   
-});
+}]);
 
 jaegerApp.directive('contenteditable', function () {
       return {
@@ -108,3 +160,20 @@ jaegerApp.directive('contenteditable', function () {
           }
       };
   });
+
+
+jaegerApp.directive('fileUpload', function () {
+    return {
+        scope: true,        //create a new scope
+        link: function (scope, el, attrs) {
+            el.bind('change', function (event) {
+                var files = event.target.files;
+                //iterate files since 'multiple' may be specified on the element
+                for (var i = 0;i<files.length;i++) {
+                    //emit event upward
+                    scope.$emit("fileSelected", { file: files[i] });
+                }                                       
+            });
+        }
+    };
+});

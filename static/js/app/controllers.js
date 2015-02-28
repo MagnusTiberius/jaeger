@@ -59,21 +59,19 @@ jaegerApp.controller('CarouselCtrlr', function($scope) {
     debugger
     alert(event.target.id);
   };
-  $scope.delete = function(event) {
+  $scope.delete = function(item) {
     debugger
-    alert(event.target.id);
+    var index=$scope.list.items.indexOf(item);
+    $scope.list.items.splice(index,1);
   };
   $scope.add = function(event) {
-    //debugger
-    //alert(event.target.id);
     var newitm = new function() {
-            this.heading = "New Heading";
             this.description = "Description";
             this.id = Math.floor((Math.random()*9999999)+1);
+            this.heading = "New Heading " + this.id;
             this.image = "http://placehold.it/350x250";
         }    
     $scope.list.items.push(newitm);
-    
   };
   
 });

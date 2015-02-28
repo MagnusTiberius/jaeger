@@ -9,67 +9,33 @@
         <div class="panel-body">
             <p><button class="btn btn-default">add</button></p>
             <p></p>
-            <table class="table">
+            <table class="table" ng-controller="CarouselCtrlr" ng-init="count=1">
                <thead>
                   <tr>
-                    <th>#</th>
+                    
                     <th>Heading</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-controller="itemController">
-                    <td>1</td>
+                  <tr ng-repeat="item in list.items">
+                    
                     <td contenteditable="false">
-                      <div contenteditable="true">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-                      <br>
-                      <div contenteditable="true" ng-model="slideItemMessage">Decades of Intel chips, including the 22nm 3rd generation Intel® Core™ processor with its revolutionary 3-D Tri-Gate transistors, illustrate Intel’s unwavering commitment to delivering technology and manufacturing leadership to the devices you use every day. As you advance through the chart, the benefits of Moore’s Law, which states that the number of transistors rough</div>
-                      <div contenteditable="false">
-                        <img src="http://placehold.it/350x250">
+                      <div ng-model="item.id" id="{{ item.id }}">
+                        <div ng-attr-id="{{item.id + 'heading'}}" contenteditable="true" ng-model="item.heading">{{ item.heading }}</div>
+                        <br>
+                        <div ng-attr-id="{{item.id + 'description'}}" contenteditable="true" ng-model="item.description">{{ item.description }}</div>
+                        <div contenteditable="false">
+                          <img ng-attr-id="{{item.id + 'image'}}" src="{{ item.image }}" ng-model="item.image">
+                        </div>
                       </div>
                     </td>
                     <td>
-                        <button class="btn btn-default">edit</button>
+                        <button class="btn btn-default">save</button>
                         <br><br><br>
-                        <button class="btn btn-default" ng-click="delete()">delete</button>
+                        <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="delete($event)">delete</button>
                         <br><br><br>
-                        <button class="btn btn-default" ng-click="upload()">upload</button>
-                    </td>
-                  </tr>
-                  <tr ng-controller="itemController">
-                    <td>2</td>
-                    <td>
-                      <div contenteditable="true">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-                      <br>
-                      <div contenteditable="true">Decades of Intel chips, including the 22nm 3rd generation Intel® Core™ processor with its revolutionary 3-D Tri-Gate transistors, illustrate Intel’s unwavering commitment to delivering technology and manufacturing leadership to the devices you use every day. As you advance through the chart, the benefits of Moore’s Law, which states that the number of transistors rough</div>
-                      <div contenteditable="false">
-                        <img src="http://placehold.it/350x250">
-                      </div>
-                    </td>
-                    <td>
-                        <button class="btn btn-default">edit</button>
-                        <br><br><br>
-                        <button class="btn btn-default" ng-click="delete()">delete</button>
-                        <br><br><br>
-                        <button class="btn btn-default" ng-click="upload()">upload</button>
-                    </td>
-                  </tr>
-                  <tr ng-controller="itemController">
-                    <td>3</td>
-                    <td>
-                      <div contenteditable="true">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-                      <br>
-                      <div contenteditable="true">Decades of Intel chips, including the 22nm 3rd generation Intel® Core™ processor with its revolutionary 3-D Tri-Gate transistors, illustrate Intel’s unwavering commitment to delivering technology and manufacturing leadership to the devices you use every day. As you advance through the chart, the benefits of Moore’s Law, which states that the number of transistors rough</div>
-                      <div contenteditable="false">
-                        <img src="http://placehold.it/350x250">
-                      </div>
-                    </td>
-                    <td>
-                        <button class="btn btn-default">edit</button>
-                        <br><br><br>
-                        <button class="btn btn-default" ng-click="delete()">delete</button>
-                        <br><br><br>
-                        <button class="btn btn-default" ng-click="upload()">upload</button>
+                        <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="upload($event)">upload</button>
                     </td>
                   </tr>
                 </tbody>

@@ -17,10 +17,50 @@ jaegerApp.controller('itemController', function ($scope) {
 
 	$scope.upload = function() {alert("aaaa");};
 	$scope.delete = function() {alert("delete item?");};
+  /*
 	$scope.slideItemMessage = "shdfjhsdfjk hsjkfh sdjkfhsdjkfh jksdfh jksdhfjk sdhf jksdhf jksdhf jksdhf jksdh fjksdhfjk fasdfsdf";
-
+  */
 });
 
+
+jaegerApp.controller('CarouselCtrlr', function($scope) {
+  var json = {
+    "items":
+        [
+                {
+                   "id":"11111111111",
+                   "heading":"heading1",
+                   "description":"description of heading1",
+                   "image":"http://placehold.it/350x250"
+                },
+                {
+                   "id":"222222222222",
+                   "heading":"heading2",
+                   "description":"description of heading2",
+                   "image":"http://placehold.it/350x250"
+                },
+                {
+                   "id":"3333333333333",
+                   "heading":"heading3",
+                   "description":"description of heading3",
+                   "image":"http://placehold.it/350x250"
+                }
+
+        ]
+  };
+  
+  $scope.list = json;
+  
+  $scope.upload = function(event) {
+    debugger
+    alert(event.target.id);
+  };
+  $scope.delete = function(event) {
+    debugger
+    alert(event.target.id);
+  };
+  
+});
 
 jaegerApp.directive('contenteditable', function () {
       return {

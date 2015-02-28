@@ -18,23 +18,25 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  <tr ng-controller="itemController">
                     <td>1</td>
                     <td contenteditable="false">
                       <div contenteditable="true">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
                       <br>
-                      <div contenteditable="true">Decades of Intel chips, including the 22nm 3rd generation Intel® Core™ processor with its revolutionary 3-D Tri-Gate transistors, illustrate Intel’s unwavering commitment to delivering technology and manufacturing leadership to the devices you use every day. As you advance through the chart, the benefits of Moore’s Law, which states that the number of transistors rough</div>
+                      <div contenteditable="true" ng-model="slideItemMessage">Decades of Intel chips, including the 22nm 3rd generation Intel® Core™ processor with its revolutionary 3-D Tri-Gate transistors, illustrate Intel’s unwavering commitment to delivering technology and manufacturing leadership to the devices you use every day. As you advance through the chart, the benefits of Moore’s Law, which states that the number of transistors rough</div>
                       <div contenteditable="false">
                         <img src="http://placehold.it/350x250">
                       </div>
                     </td>
                     <td>
                         <button class="btn btn-default">edit</button>
-                        <button class="btn btn-default">delete</button>
-                        <button class="btn btn-default">upload</button>
+                        <br><br><br>
+                        <button class="btn btn-default" ng-click="delete()">delete</button>
+                        <br><br><br>
+                        <button class="btn btn-default" ng-click="upload()">upload</button>
                     </td>
                   </tr>
-                  <tr>
+                  <tr ng-controller="itemController">
                     <td>2</td>
                     <td>
                       <div contenteditable="true">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
@@ -46,11 +48,13 @@
                     </td>
                     <td>
                         <button class="btn btn-default">edit</button>
-                        <button class="btn btn-default">delete</button>
-                        <button class="btn btn-default">upload</button>
+                        <br><br><br>
+                        <button class="btn btn-default" ng-click="delete()">delete</button>
+                        <br><br><br>
+                        <button class="btn btn-default" ng-click="upload()">upload</button>
                     </td>
                   </tr>
-                  <tr>
+                  <tr ng-controller="itemController">
                     <td>3</td>
                     <td>
                       <div contenteditable="true">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
@@ -62,8 +66,10 @@
                     </td>
                     <td>
                         <button class="btn btn-default">edit</button>
-                        <button class="btn btn-default">delete</button>
-                        <button class="btn btn-default">upload</button>
+                        <br><br><br>
+                        <button class="btn btn-default" ng-click="delete()">delete</button>
+                        <br><br><br>
+                        <button class="btn btn-default" ng-click="upload()">upload</button>
                     </td>
                   </tr>
                 </tbody>

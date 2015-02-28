@@ -6,10 +6,10 @@
   <div class="container">
     <div class="panel panel-default">
       <div class="panel-heading">Carousel Panel</div>
-        <div class="panel-body">
-            <p><button class="btn btn-default">add</button></p>
+        <div class="panel-body" ng-controller="CarouselCtrlr" ng-init="count=1">
+            <p><button class="btn btn-default" ng-click="add($event)">add</button></p>
             <p></p>
-            <table class="table" ng-controller="CarouselCtrlr" ng-init="count=1">
+            <table class="table" >
                <thead>
                   <tr>
                     

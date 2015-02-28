@@ -51,6 +51,10 @@ jaegerApp.controller('CarouselCtrlr', function($scope) {
   
   $scope.list = json;
   
+  $scope.getRandomNum = function(){
+    return Math.floor((Math.random()*9999999)+1);
+  } 
+ 
   $scope.upload = function(event) {
     debugger
     alert(event.target.id);
@@ -58,6 +62,18 @@ jaegerApp.controller('CarouselCtrlr', function($scope) {
   $scope.delete = function(event) {
     debugger
     alert(event.target.id);
+  };
+  $scope.add = function(event) {
+    //debugger
+    //alert(event.target.id);
+    var newitm = new function() {
+            this.heading = "New Heading";
+            this.description = "Description";
+            this.id = Math.floor((Math.random()*9999999)+1);
+            this.image = "http://placehold.it/350x250";
+        }    
+    $scope.list.items.push(newitm);
+    
   };
   
 });

@@ -22,7 +22,7 @@ func HandleWsUserList(w http.ResponseWriter, r *http.Request) []users.User {
     }
     //panic(users)
 
-    usrs := []users.User{[]{Email:"test@email.com"}}
+    //usrs := []users.User{[]{Email:"test@email.com"}}
 
     return users	
 }

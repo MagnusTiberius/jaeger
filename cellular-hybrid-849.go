@@ -41,6 +41,7 @@ var (
 		"maindocftr.html",
 		"vehiclecreate.html",
 		"vehicleedit.html",
+		"vehicleadmin.html",
 		"vehicleview.html",
 		"vehicles.html",
 		"upload.html",
@@ -71,6 +72,7 @@ func init() {
 	rtr.HandleFunc("/entity/{name:[a-z]+}/create", handleInvItm).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-z]+}/create", handleVehicleCreate).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-z]+}/edit", handleVehicleEdit).Methods("GET","POST")
+	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/admin", handleVehicleAdmin).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/view", handleVehicleView).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
 	rtr.HandleFunc("/upload", handleUpload).Methods("GET","POST")
@@ -219,6 +221,35 @@ func handleVehicleView(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w,r,"/error",301)
 	}
 
+}
+
+func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	name := params["name"]
+	_ = name
+
+	if r.Method == "POST" {
+		/*
+		b := &bytes.Buffer{}
+		h := GetSessionWebPage(w,r,appcontext)
+		if err := templates.ExecuteTemplate(b, "vehicleedit.html", h); err != nil {
+			//writeError(w, r, err)
+			return
+		}
+		b.WriteTo(w)
+		*/
+		medit := fmt.Sprintf("/vehicle/%v/admin",name)
+		http.Redirect(w,r,medit,301)
+		return
+	}
+
+	b := &bytes.Buffer{}
+	h := main.GetSessionWebPage(w,r,appcontext)
+	if err := templates.ExecuteTemplate(b, "vehicleadmin.html", h); err != nil {
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
 }
 
 func handleVehicleEdit(w http.ResponseWriter, r *http.Request) {

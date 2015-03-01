@@ -29,6 +29,18 @@ jaegerApp.controller('VehicleCtrlr', ['$scope','$http', function($scope,$http) {
   
   $scope.list = json;
 
+  $http.get('/ws/user/bgonza/vehicles/getall').
+    success(function(data, status, headers, config) {
+      // this callback will be called asynchronously
+      // when the response is available
+      debugger;
+      $scope.list = data;
+    }).
+    error(function(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });   
+
   $scope.add = function(event) {
   	alert("Add Vehicle");
   };	

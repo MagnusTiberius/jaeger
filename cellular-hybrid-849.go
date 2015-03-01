@@ -85,6 +85,7 @@ func init() {
 	rtr.HandleFunc("/blob/", handleBlob).Methods("GET","POST")
 
 	rtr.HandleFunc("/ws/user/list", handleWsUserList).Methods("GET","POST")
+	rtr.HandleFunc("/ws/user/{name:[a-zA-Z0-9]+}/vehicles/getall", handleWsVehiclesUserAdminGetall).Methods("GET","POST")
 
 	http.Handle("/", rtr)
 
@@ -206,6 +207,53 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 
+func handleWsVehiclesUserAdminGetall(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	params := mux.Vars(r)
+	username := params["name"]
+	_ = username
+	session, _ := appcontext.Store.Get(r, "jaegersignup")
+	keyIdString := session.Values["KeyIdString"].(string) 
+
+	q := datastore.NewQuery("User").
+                Filter("UserName =", username)
+    var users []users.User
+    _, err := q.GetAll(c, &users)
+    if err != nil {
+            panic(err)
+            return
+    }
+	ancestorKey := datastore.NewKey(c, "User", keyIdString, 0, nil)	
+	q = datastore.NewQuery("Person").Ancestor(ancestorKey)
+	var vehicles []inv.VehicleEntity
+
+	js, err := json.Marshal(vehicles)
+	if err != nil {
+		panic(err)
+	}
+	if (vehicles == nil) {
+		v := new(inv.VehicleEntity)
+		v.ManufacturerCode = "undefined"
+		v.ModelCode = "undefined"
+		v.TrimCode = "undefined"
+		v.KeyName = context.RandSeq(32)
+		v.KeyId = v.KeyName
+		v2 := new(inv.VehicleEntity)
+		v2.ManufacturerCode = "undefined"
+		v2.ModelCode = "undefined"
+		v2.TrimCode = "undefined"
+		v2.KeyName = context.RandSeq(32)
+		v2.KeyId = v2.KeyName
+		vehicles = []inv.VehicleEntity{*v, *v2}
+		js, err = json.Marshal(vehicles)
+		if err != nil {
+			panic(err)
+		}
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)	
+}
+
 
 func handleVehiclesUserAdmin(w http.ResponseWriter, r *http.Request) {
 
@@ -219,20 +267,12 @@ func handleVehiclesUserAdmin(w http.ResponseWriter, r *http.Request) {
 	k := datastore.NewKey(c, "User", email, 0, nil)
 	//panic(k)
 	_=k
-    q := datastore.NewQuery("Vehicle").Ancestor(k)
 
     //panic(appcontext)
 
-    var vehicles []inv.VehicleEntity
-    _, err := q.GetAll(c, &vehicles)
-    //panic(vehicles)
-    if err != nil {
-    	panic(err)
-    }
-
 	b := &bytes.Buffer{}
 	h := main.GetSessionWebPage(w,r,appcontext)
-	h.Vehicles = vehicles
+
 	//panic(h)
 	if err := templates.ExecuteTemplate(b, "useradminvehicles.html", h); err != nil {
 		http.Redirect(w,r,"/error",301)
@@ -321,6 +361,7 @@ func getUploadUrlSession(w http.ResponseWriter, r *http.Request) {
 
 func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
+	_ = c
 	params := mux.Vars(r)
 	name := params["name"]
 	_ = name
@@ -340,17 +381,8 @@ func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    uploadURL, err := blobstore.UploadURL(c, "/uploadcomplete/angular", nil)
-    if err != nil {
-            panic(err)
-            return
-    }
-
 	b := &bytes.Buffer{}
 	h := main.GetSessionWebPage(w,r, appcontext)
-	h.UploadURL = uploadURL
-	h.RequestURI = uploadURL.RequestURI()
-
 
 	if (len(h.Email) == 0) {
 		panic("Invalid session, no email found in session.")

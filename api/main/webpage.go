@@ -26,6 +26,7 @@ type WebPage struct {
 	Vehicles    []inv.VehicleEntity
 	Vehicle     inv.VehicleEntity
 	UploadURL   *url.URL
+	RequestURI  string
 }
 
 func GetSessionWebPage(w http.ResponseWriter, r *http.Request, appcontext *context.Context) WebPage {

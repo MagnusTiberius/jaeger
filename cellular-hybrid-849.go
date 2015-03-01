@@ -76,7 +76,9 @@ func init() {
 	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/view", handleVehicleView).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
 	rtr.HandleFunc("/upload", handleUpload).Methods("GET","POST")
+	rtr.HandleFunc("/upload/angular", handleUploadAngular).Methods("GET","POST")
 	rtr.HandleFunc("/uploadcomplete", handleUploadComplete).Methods("GET","POST")
+	rtr.HandleFunc("/uploadcomplete/angular", handleUploadCompleteAngular).Methods("GET","POST")
 	rtr.HandleFunc("/blob/", handleBlob).Methods("GET","POST")
 
 	rtr.HandleFunc("/ws/user/list", handleWsUserList).Methods("GET","POST")
@@ -120,6 +122,27 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	b := &bytes.Buffer{}
 	h := main.GetSessionWebPage(w,r, appcontext)
 	h.UploadURL = uploadURL
+	h.RequestURI = uploadURL.RequestURI()
+	if err := templates.ExecuteTemplate(b, "upload.html", h); err != nil {
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
+}
+
+func handleUploadAngular(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+
+    uploadURL, err := blobstore.UploadURL(c, "/uploadcomplete", nil)
+    if err != nil {
+            panic(err)
+            return
+    }
+
+	b := &bytes.Buffer{}
+	h := main.GetSessionWebPage(w,r, appcontext)
+	h.UploadURL = uploadURL
+	h.RequestURI = uploadURL.RequestURI()
 	if err := templates.ExecuteTemplate(b, "upload.html", h); err != nil {
 		//writeError(w, r, err)
 		return
@@ -143,6 +166,24 @@ func handleUploadComplete(w http.ResponseWriter, r *http.Request) {
     http.Redirect(w, r, "/blob/?blobKey="+string(file[0].BlobKey), http.StatusFound)
 }
 
+func handleUploadCompleteAngular(w http.ResponseWriter, r *http.Request) {
+	//c := appengine.NewContext(r)
+
+    blobs, _, err := blobstore.ParseUpload(r)
+    _ = blobs
+    if err != nil {
+            panic(err)
+            return
+    }
+    file := blobs["file"]
+    if len(file) == 0 {
+    	panic("file invalid")
+    }
+    //http.Redirect(w, r, "/blob/?blobKey="+string(file[0].BlobKey), http.StatusFound)
+    key := fmt.Sprintf("{\"blobKey\":\"%s\"}",string(file[0].BlobKey))
+    w.Header().Set("Content-Type", "application/json")
+    w.Write([]byte(key))
+}
 
 func handleBlob(w http.ResponseWriter, r *http.Request) {
 	blobstore.Send(w, appengine.BlobKey(r.FormValue("blobKey")))
@@ -224,6 +265,7 @@ func handleVehicleView(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
 	params := mux.Vars(r)
 	name := params["name"]
 	_ = name
@@ -243,8 +285,18 @@ func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+    uploadURL, err := blobstore.UploadURL(c, "/uploadcomplete/angular", nil)
+    if err != nil {
+            panic(err)
+            return
+    }
+
 	b := &bytes.Buffer{}
-	h := main.GetSessionWebPage(w,r,appcontext)
+	h := main.GetSessionWebPage(w,r, appcontext)
+	h.UploadURL = uploadURL
+	h.RequestURI = uploadURL.RequestURI()
+
+
 	if err := templates.ExecuteTemplate(b, "vehicleadmin.html", h); err != nil {
 		//writeError(w, r, err)
 		return

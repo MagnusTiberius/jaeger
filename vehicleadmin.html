@@ -7,12 +7,13 @@
     <div class="panel panel-default">
       <div class="panel-heading">Carousel Panel</div>
         <div class="panel-body" ng-controller="CarouselCtrlr" ng-init="count=1">
+            <input type="text" value="[[.UploadURL]]" text="[[.UploadURL]]" ng-model="uploadurl" ng-attr-id="uploadurl" ng-init="uploadurl='[[.UploadURL]]'">
+            <input type="text" value="[[.RequestURI]]" text="[[.RequestURI]]" ng-model="requesturi" ng-attr-id="requesturi" ng-init="requesturi='[[.RequestURI]]'">
             <p><button class="btn btn-default" ng-click="add($event)">add</button></p>
             <p></p>
             <table class="table" >
                <thead>
                   <tr>
-                    
                     <th>Heading</th>
                     <th>Action</th>
                   </tr>
@@ -27,7 +28,7 @@
                         <div ng-attr-id="{{item.id + 'description'}}" contenteditable="true" ng-model="item.description">{{ item.description }}</div>
                         <div contenteditable="false">
                           <img ng-attr-id="{{item.id + 'image'}}" ng-src="{{ item.image }}" ng-model="item.image">
-                          <input type="file" file-upload multiple/>
+                          <input type="file" file-upload/>
                           <ul>
                               <li ng-repeat="file in files">{{file.name}}</li>
                           </ul>                          

@@ -51,7 +51,14 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
   
   $scope.list = json;
 
+  $scope.model = {
+      name: "",
+      comments: ""
+  };
+
   $scope.files = [];
+
+  $scope.uploadurl;
 
   //listen for the file selected event
   $scope.$on("fileSelected", function (event, args) {
@@ -71,10 +78,12 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
   };
 
   //the save method
-  $scope.upload = function() {
+  $scope.upload = function(event) {
+      debugger;
+      //alert($scope.requesturi);
       $http({
           method: 'POST',
-          url: "/Api/PostStuff",
+          url: $scope.requesturi,
           //IMPORTANT!!! You might think this should be set to 'multipart/form-data' 
           // but this is not true because when we are sending up files the request 
           // needs to include a 'boundary' parameter which identifies the boundary 
@@ -82,19 +91,22 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
           // manually will not set this boundary parameter. For whatever reason, 
           // setting the Content-type to 'false' will force the request to automatically
           // populate the headers properly including the boundary parameter.
-          headers: { 'Content-Type': undefined },
+          headers: {    'Content-Type': undefined },
           //This method will allow us to change how the data is sent up to the server
           // for which we'll need to encapsulate the model data in 'FormData'
           transformRequest: function (data) {
+              debugger;
               var formData = new FormData();
               //need to convert our json object to a string version of json otherwise
               // the browser will do a 'toString()' on the object which will result 
               // in the value '[Object object]' on the server.
               formData.append("model", angular.toJson(data.model));
               //now add all of the assigned files
-              for (var i = 0; i < data.files; i++) {
+              for (var i = 0; i < data.files.length; i++) {
                   //add each file to the form data and iteratively name them
-                  formData.append("file" + i, data.files[i]);
+                  debugger;
+                  //formData.append("file" + i, data.files[i]);
+                  formData.append("file" , data.files[i]);
               }
               return formData;
           },
@@ -103,9 +115,11 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
           data: { model: $scope.model, files: $scope.files }
       }).
       success(function (data, status, headers, config) {
+          debugger;
           alert("success!");
       }).
       error(function (data, status, headers, config) {
+          debugger;
           alert("failed!");
       });
   };  

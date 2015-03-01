@@ -82,6 +82,24 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
   $scope.upload = function(event,obj) {
       //debugger;
       //alert($scope.requesturi);
+
+      if ($scope.files.length < 1) {
+        alert("there's nothing to upload.");
+        return;
+      }
+
+      $http.get('/upload/url').
+        success(function(data, status, headers, config) {
+          // this callback will be called asynchronously
+          // when the response is available
+          debugger;
+          $scope.requesturi = data.uploadurl;
+        }).
+        error(function(data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+        });          
+
       $http({
           method: 'POST',
           url: $scope.requesturi,
@@ -131,14 +149,14 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
           $("#fileup").type = "text";
           $("#fileup").type = "file";
           $scope.files = [];
-          alert("success!" + data.blobKey);
+          //alert("success!" + data.blobKey);
       }).
       error(function (data, status, headers, config) {
           debugger;
           $("#fileup").type = "text";
           $("#fileup").type = "file";
           $scope.files = [];
-          alert("failed!");
+          //alert("failed!");
       });
   };  
 

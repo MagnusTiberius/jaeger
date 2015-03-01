@@ -76,6 +76,7 @@ func init() {
 	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/view", handleVehicleView).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
 	rtr.HandleFunc("/upload", handleUpload).Methods("GET","POST")
+	rtr.HandleFunc("/upload/url", getUploadUrlSession).Methods("GET")
 	rtr.HandleFunc("/upload/angular", handleUploadAngular).Methods("GET","POST")
 	rtr.HandleFunc("/uploadcomplete", handleUploadComplete).Methods("GET","POST")
 	rtr.HandleFunc("/uploadcomplete/angular", handleUploadCompleteAngular).Methods("GET","POST")
@@ -261,6 +262,20 @@ func handleVehicleView(w http.ResponseWriter, r *http.Request) {
 	} else {
 		http.Redirect(w,r,"/error",301)
 	}
+
+}
+
+func getUploadUrlSession(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+    uploadURL, err := blobstore.UploadURL(c, "/uploadcomplete/angular", nil)
+    if err != nil {
+            panic(err)
+            return
+    }
+	sessn := uploadURL.RequestURI()
+    jsn := fmt.Sprintf("{\"uploadurl\":\"%s\"}",sessn)
+    w.Header().Set("Content-Type", "application/json")
+    w.Write([]byte(jsn))
 
 }
 

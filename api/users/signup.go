@@ -22,12 +22,15 @@ func SignUp(u *User, r *http.Request) bool {
 		return false
 	}
 
+	if len(u.KeyIdString) == 0 {
+		panic("Invalid u.KeyIdString.")
+	}
 
-	k := datastore.NewKey(c, "User", u.Email, 0, nil)
+	k := datastore.NewKey(c, "User", u.KeyIdString, 0, nil)
 	
 	_, err := datastore.Put(c, k, u)
 	if err != nil {
-		//panic(err)
+		panic(err)
         //http.Error(w, err.Error(), http.StatusInternalServerError)
         return false
     }	

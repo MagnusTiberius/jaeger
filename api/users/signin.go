@@ -55,6 +55,8 @@ func SignIn(u *User, w http.ResponseWriter, r *http.Request, appcontext *context
         	session, _ := appcontext.Store.Get(r, "jaegersignup")
 			session.Values["Email"] = u.Email
 			session.Values["UserName"] = u.UserName        	
+			session.Values["KeyIdString"] = u.KeyIdString        	
+			session.Values["KeyIdInt"] = u.KeyIdInt        	
         	session.Save(r, w)
         	//appcontext = context.GetContext()
         	//panic(key)

@@ -9,6 +9,7 @@
         <div class="panel-body" ng-controller="CarouselCtrlr" ng-init="count=1">
             <input type="hidden" value="[[.UploadURL]]" text="[[.UploadURL]]" ng-model="uploadurl" ng-attr-id="uploadurl" ng-init="uploadurl='[[.UploadURL]]'">
             <input type="hidden" value="[[.RequestURI]]" text="[[.RequestURI]]" ng-model="requesturi" ng-attr-id="requesturi" ng-init="requesturi='[[.RequestURI]]'">
+            <input type="text" value="[[.Email]]" text="[[.Email]]" ng-model="email" ng-attr-id="email" ng-init="email='[[.Email]]'">
             <p><button class="btn btn-default" ng-click="add($event)">add</button></p>
             <p></p>
             <table class="table" >

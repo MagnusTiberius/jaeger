@@ -49,8 +49,10 @@ func AddVehicleEntity(r *http.Request, appcontext *context.Context) (*datastore.
 	//userKey := appcontext.UserKey
 
 	session, _ := appcontext.Store.Get(r, "jaegersignup")
-	email := session.Values["Email"].(string)
-	userKey := datastore.NewKey(c, "User", email, 0, nil)	
+	//email := session.Values["Email"].(string)
+	keyIdString := session.Values["KeyIdString"].(string)
+	
+	userKey := datastore.NewKey(c, "User", keyIdString, 0, nil)	
 
 	apengcontext := appengine.NewContext(r)
 

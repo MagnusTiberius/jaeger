@@ -46,6 +46,7 @@ var (
 		"vehicles.html",
 		"upload.html",
 		"userlist.html",
+		"useradminvehicles.html",
 	))
 )
 
@@ -69,6 +70,7 @@ func init() {
 	rtr.HandleFunc("/user/{name:[a-z]+}/myaccount", handleProfile).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/signout", handleSignout).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/vehicles", handleVehicles).Methods("GET","POST")
+	rtr.HandleFunc("/user/{name:[a-z]+}/vehicles/admin", handleVehiclesUserAdmin).Methods("GET","POST")
 	rtr.HandleFunc("/entity/{name:[a-z]+}/create", handleInvItm).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-z]+}/create", handleVehicleCreate).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-z]+}/edit", handleVehicleEdit).Methods("GET","POST")
@@ -205,6 +207,44 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 
 
 
+func handleVehiclesUserAdmin(w http.ResponseWriter, r *http.Request) {
+
+	c := appengine.NewContext(r)
+	//session, _ := appcontext.Store.Get(r, "jaegersignup")
+	//appcontext := context.GetContext()
+
+	//panic(userkey)
+	session, _ := appcontext.Store.Get(r, "jaegersignup")
+	email := session.Values["Email"].(string)
+	k := datastore.NewKey(c, "User", email, 0, nil)
+	//panic(k)
+	_=k
+    q := datastore.NewQuery("Vehicle").Ancestor(k)
+
+    //panic(appcontext)
+
+    var vehicles []inv.VehicleEntity
+    _, err := q.GetAll(c, &vehicles)
+    //panic(vehicles)
+    if err != nil {
+    	panic(err)
+    }
+
+	b := &bytes.Buffer{}
+	h := main.GetSessionWebPage(w,r,appcontext)
+	h.Vehicles = vehicles
+	//panic(h)
+	if err := templates.ExecuteTemplate(b, "useradminvehicles.html", h); err != nil {
+		http.Redirect(w,r,"/error",301)
+		//writeError(w, r, err)
+		return
+	}
+	b.WriteTo(w)
+
+	
+
+}
+
 func handleVehicles(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	//session, _ := appcontext.Store.Get(r, "jaegersignup")
@@ -312,8 +352,14 @@ func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
 	h.RequestURI = uploadURL.RequestURI()
 
 
+	if (len(h.Email) == 0) {
+		panic("Invalid session, no email found in session.")
+		return
+	}
+
 	if err := templates.ExecuteTemplate(b, "vehicleadmin.html", h); err != nil {
 		//writeError(w, r, err)
+		panic(err)
 		return
 	}
 	b.WriteTo(w)
@@ -504,6 +550,7 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 		u.UserName = uname
 		u.FirstName = r.FormValue("firstname") 
 		u.LastName = r.FormValue("lastname") 
+		u.KeyIdString = context.RandSeq(32)
 		if users.SignUp(u, r) {
 			b := &bytes.Buffer{}
 			if err := templates.ExecuteTemplate(b, "signupgood.html", h); err != nil {

@@ -53,7 +53,8 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
 
   $scope.model = {
       name: "",
-      comments: ""
+      comments: "",
+      id: ""
   };
 
   $scope.files = [];
@@ -78,8 +79,8 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
   };
 
   //the save method
-  $scope.upload = function(event) {
-      debugger;
+  $scope.upload = function(event,obj) {
+      //debugger;
       //alert($scope.requesturi);
       $http({
           method: 'POST',
@@ -95,16 +96,18 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
           //This method will allow us to change how the data is sent up to the server
           // for which we'll need to encapsulate the model data in 'FormData'
           transformRequest: function (data) {
-              debugger;
+              //debugger;
               var formData = new FormData();
               //need to convert our json object to a string version of json otherwise
               // the browser will do a 'toString()' on the object which will result 
               // in the value '[Object object]' on the server.
+              data.model.id = obj.item.id;
               formData.append("model", angular.toJson(data.model));
+              formData.append("obj", obj);
               //now add all of the assigned files
               for (var i = 0; i < data.files.length; i++) {
                   //add each file to the form data and iteratively name them
-                  debugger;
+                  //debugger;
                   //formData.append("file" + i, data.files[i]);
                   formData.append("file" , data.files[i]);
               }
@@ -115,11 +118,26 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
           data: { model: $scope.model, files: $scope.files }
       }).
       success(function (data, status, headers, config) {
-          debugger;
-          alert("success!");
+          //debugger;
+          //$('#'+imgid).src = "/blob/blobKey=" + data.blobKey;
+          //imageid = "#"+config.data.model.id + "image";
+          //imgObject = $(imageid);
+          //imgObject.attr('src','http://localhost:8080/images/1/myImage.png' );
+          for (var i=0; i<$scope.list.items.length; i++) {
+              if ($scope.list.items[i].id == config.data.model.id) {
+                $scope.list.items[i].image = '/blob/?blobKey=' + data.blobKey;
+              }
+          }
+          $("#fileup").type = "text";
+          $("#fileup").type = "file";
+          $scope.files = [];
+          alert("success!" + data.blobKey);
       }).
       error(function (data, status, headers, config) {
           debugger;
+          $("#fileup").type = "text";
+          $("#fileup").type = "file";
+          $scope.files = [];
           alert("failed!");
       });
   };  

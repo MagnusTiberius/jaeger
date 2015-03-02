@@ -86,6 +86,7 @@ func init() {
 
 	rtr.HandleFunc("/ws/user/list", handleWsUserList).Methods("GET","POST")
 	rtr.HandleFunc("/ws/user/{name:[a-zA-Z0-9]+}/vehicles/getall", handleWsVehiclesUserAdminGetall).Methods("GET","POST")
+	rtr.HandleFunc("/ws/vehicle/{vehicle:[a-zA-Z0-9]+}/carousel/getall", handleWsCarouselGetall).Methods("GET","POST")
 
 	http.Handle("/", rtr)
 
@@ -206,6 +207,61 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 	b.WriteTo(w)
 }
 
+
+func handleWsCarouselGetall(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	params := mux.Vars(r)
+	vehicleKey := params["vehicle"]
+	_ = vehicleKey
+	session, _ := appcontext.Store.Get(r, "jaegersignup")
+	keyIdString := session.Values["KeyIdString"].(string) 
+
+	q := datastore.NewQuery("VehicleEntity").
+                Filter("KeyName =", vehicleKey)
+    var vehicles []inv.VehicleEntity
+    keys, err := q.GetAll(c, &vehicles)
+    if err != nil {
+            panic(err)
+            return
+    }
+
+    if len(vehicles) == 0 {
+    	panic("Vehicle not found")
+    	return
+    }
+
+    vehicle := vehicles[0]
+
+	ancestorKey := datastore.NewKey(c, "User", keyIdString, 0, nil)	
+	q = datastore.NewQuery("Vehicle").Ancestor(ancestorKey)
+	var vehicles []inv.VehicleEntity
+	keys, err := q.GetAll(c, &vehicles)
+	js, err := json.Marshal(vehicles)
+	if err != nil {
+		panic(err)
+	}
+	if (vehicles == nil) {
+		v := new(inv.VehicleEntity)
+		v.ManufacturerCode = "undefined"
+		v.ModelCode = "undefined"
+		v.TrimCode = "undefined"
+		v.KeyName = context.RandSeq(32)
+		v.KeyId = v.KeyName
+		v2 := new(inv.VehicleEntity)
+		v2.ManufacturerCode = "undefined"
+		v2.ModelCode = "undefined"
+		v2.TrimCode = "undefined"
+		v2.KeyName = context.RandSeq(32)
+		v2.KeyId = v2.KeyName
+		vehicles = []inv.VehicleEntity{*v, *v2}
+		js, err = json.Marshal(vehicles)
+		if err != nil {
+			panic(err)
+		}
+	} 
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)	
+}
 
 func handleWsVehiclesUserAdminGetall(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)

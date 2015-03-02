@@ -216,10 +216,11 @@ func handleWsCarouselGetall(w http.ResponseWriter, r *http.Request) {
 	session, _ := appcontext.Store.Get(r, "jaegersignup")
 	keyIdString := session.Values["KeyIdString"].(string) 
 
-	q := datastore.NewQuery("VehicleEntity").
+	q := datastore.NewQuery("Vehicle").
                 Filter("KeyName =", vehicleKey)
     var vehicles []inv.VehicleEntity
-    keys, err := q.GetAll(c, &vehicles)
+    keysV, err := q.GetAll(c, &vehicles)
+    _ = keysV
     if err != nil {
             panic(err)
             return
@@ -230,35 +231,18 @@ func handleWsCarouselGetall(w http.ResponseWriter, r *http.Request) {
     	return
     }
 
-    vehicle := vehicles[0]
+    //vehicle := vehicles[0]
 
-	ancestorKey := datastore.NewKey(c, "User", keyIdString, 0, nil)	
-	q = datastore.NewQuery("Vehicle").Ancestor(ancestorKey)
-	var vehicles []inv.VehicleEntity
-	keys, err := q.GetAll(c, &vehicles)
-	js, err := json.Marshal(vehicles)
+	ancestorKey := datastore.NewKey(c, "Vehicle", keyIdString, 0, nil)	
+	q = datastore.NewQuery("Carousel").Ancestor(ancestorKey)
+	var carouselItems []inv.CarouselEntity
+	keysCar, err := q.GetAll(c, &carouselItems)
+	_ = keysCar
+	js, err := json.Marshal(carouselItems)
 	if err != nil {
 		panic(err)
 	}
-	if (vehicles == nil) {
-		v := new(inv.VehicleEntity)
-		v.ManufacturerCode = "undefined"
-		v.ModelCode = "undefined"
-		v.TrimCode = "undefined"
-		v.KeyName = context.RandSeq(32)
-		v.KeyId = v.KeyName
-		v2 := new(inv.VehicleEntity)
-		v2.ManufacturerCode = "undefined"
-		v2.ModelCode = "undefined"
-		v2.TrimCode = "undefined"
-		v2.KeyName = context.RandSeq(32)
-		v2.KeyId = v2.KeyName
-		vehicles = []inv.VehicleEntity{*v, *v2}
-		js, err = json.Marshal(vehicles)
-		if err != nil {
-			panic(err)
-		}
-	} 
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)	
 }
@@ -503,6 +487,7 @@ func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
 	    }
     }
 
+    h.VehicleKey = vehicleKey
 	if err := templates.ExecuteTemplate(b, "vehicleadmin.html", h); err != nil {
 		//writeError(w, r, err)
 		panic(err)

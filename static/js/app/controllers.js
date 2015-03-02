@@ -61,6 +61,19 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
 
   $scope.uploadurl;
 
+  $http.get('/ws/vehicle/' + $scope.vehiclekey + '/carousel/getall').
+    success(function(data, status, headers, config) {
+      // this callback will be called asynchronously
+      // when the response is available
+      debugger;
+      //$scope.list = data;
+    }).
+    error(function(data, status, headers, config) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+      //$scope.list = [];
+    }); 
+
   //listen for the file selected event
   $scope.$on("fileSelected", function (event, args) {
       $scope.$apply(function () {            

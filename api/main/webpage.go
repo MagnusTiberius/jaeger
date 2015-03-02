@@ -28,6 +28,7 @@ type WebPage struct {
 	Vehicle     inv.VehicleEntity
 	UploadURL   *url.URL
 	RequestURI  string
+	VehicleKey  string
 }
 
 func GetSessionWebPage(w http.ResponseWriter, r *http.Request, appcontext *context.Context) WebPage {
@@ -43,7 +44,11 @@ func GetSessionWebPage(w http.ResponseWriter, r *http.Request, appcontext *conte
 		name = session.Values["UserName"].(string)
 		email = session.Values["Email"].(string)
 		navbar = "navbar.html"
-		keyIdString = session.Values["KeyIdString"].(string) 
+		if (session.Values["KeyIdString"] != nil) {
+			keyIdString = session.Values["KeyIdString"].(string) 
+		} else {
+			keyIdString = ""
+		}
 		//if len(name) == 0  {
 		//	name = "Undefined Name"
 		//}

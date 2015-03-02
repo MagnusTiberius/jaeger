@@ -71,10 +71,10 @@ func init() {
 	rtr.HandleFunc("/user/{name:[a-z]+}/signout", handleSignout).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/vehicles", handleVehicles).Methods("GET","POST")
 	rtr.HandleFunc("/user/{name:[a-z]+}/vehicles/admin", handleVehiclesUserAdmin).Methods("GET","POST")
-	rtr.HandleFunc("/entity/{name:[a-z]+}/create", handleInvItm).Methods("GET","POST")
-	rtr.HandleFunc("/vehicle/{name:[a-z]+}/create", handleVehicleCreate).Methods("GET","POST")
-	rtr.HandleFunc("/vehicle/{name:[a-z]+}/edit", handleVehicleEdit).Methods("GET","POST")
-	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/admin", handleVehicleAdmin).Methods("GET","POST")
+	rtr.HandleFunc("/entity/{name:[a-zA-Z0-9]+}/create", handleInvItm).Methods("GET","POST")
+	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/create", handleVehicleCreate).Methods("GET","POST")
+	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/edit", handleVehicleEdit).Methods("GET","POST")
+	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/{vehicle:[a-zA-Z0-9]+}/admin", handleVehicleAdmin).Methods("GET","POST")
 	rtr.HandleFunc("/vehicle/{name:[a-zA-Z0-9]+}/view", handleVehicleView).Methods("GET","POST")
 	rtr.HandleFunc("/", handleHome).Methods("GET","POST")
 	rtr.HandleFunc("/upload", handleUpload).Methods("GET","POST")
@@ -224,9 +224,9 @@ func handleWsVehiclesUserAdminGetall(w http.ResponseWriter, r *http.Request) {
             return
     }
 	ancestorKey := datastore.NewKey(c, "User", keyIdString, 0, nil)	
-	q = datastore.NewQuery("Person").Ancestor(ancestorKey)
+	q = datastore.NewQuery("Vehicle").Ancestor(ancestorKey)
 	var vehicles []inv.VehicleEntity
-
+	_, err = q.GetAll(c, &vehicles)
 	js, err := json.Marshal(vehicles)
 	if err != nil {
 		panic(err)
@@ -249,7 +249,7 @@ func handleWsVehiclesUserAdminGetall(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-	}
+	} 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)	
 }
@@ -365,6 +365,8 @@ func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
 	_ = name
+	vehicleKey := params["vehicle"]
+	_ = vehicleKey
 
 	if r.Method == "POST" {
 		/*
@@ -388,6 +390,62 @@ func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
 		panic("Invalid session, no email found in session.")
 		return
 	}
+
+	q := datastore.NewQuery("VehicleEntity").
+                Filter("KeyName =", vehicleKey)
+    var vehicles []inv.VehicleEntity
+    _, err := q.GetAll(c, &vehicles)
+    if err != nil {
+            panic(err)
+            return
+    }
+
+	session, _ := appcontext.Store.Get(r, "jaegersignup")
+	keyIdString := session.Values["KeyIdString"].(string)
+	userKey := datastore.NewKey(c, "User", keyIdString, 0, nil)	
+	apengcontext := appengine.NewContext(r)
+
+    if len(vehicles) == 0 {
+		key := datastore.NewKey(apengcontext, "Vehicle", vehicleKey, 0, userKey)
+		entity := new(inv.VehicleEntity)
+		entity.ManufacturerCode = "undefined"
+		entity.ModelCode = "undefined"
+		entity.TrimCode = "undefined"
+		entity.KeyName = vehicleKey
+		entity.KeyId = vehicleKey
+		keyVehicle, err := datastore.Put(apengcontext, key, entity)
+		_ = keyVehicle
+		q := datastore.NewQuery("VehicleEntity").
+        		Filter("KeyName =", vehicleKey)
+	    var vehicles []inv.VehicleEntity
+	    _, err = q.GetAll(c, &vehicles)		
+
+	    if err != nil {
+	            panic(err)
+	            return
+	    }
+
+    }
+
+    vk := datastore.NewKey(apengcontext, "Vehicle", vehicleKey, 0, userKey)
+    q = datastore.NewQuery("CarouselEntity").Ancestor(vk)
+    carouselEntityList := []inv.CarouselEntity{}
+    _, err = q.GetAll(c, &carouselEntityList)		
+    if err != nil {
+            panic(err)
+            return
+    }
+
+    if len(carouselEntityList) == 0 {
+    	itm := new(inv.CarouselEntity)
+    	itm.KeyId = context.RandSeq(32)
+    	key := datastore.NewKey(apengcontext, "CarouselEntity", itm.KeyId, 0, vk)
+    	_, err := datastore.Put(apengcontext, key, itm)
+	    if err != nil {
+	            panic(err)
+	            return
+	    }
+    }
 
 	if err := templates.ExecuteTemplate(b, "vehicleadmin.html", h); err != nil {
 		//writeError(w, r, err)

@@ -23,6 +23,7 @@ type WebPage struct {
 	UserName 	string
 	Email 		string
 	NavBar 		string
+	KeyIdString string
 	Vehicles    []inv.VehicleEntity
 	Vehicle     inv.VehicleEntity
 	UploadURL   *url.URL
@@ -37,14 +38,16 @@ func GetSessionWebPage(w http.ResponseWriter, r *http.Request, appcontext *conte
 	var name string 
 	var email string
 	var navbar string 
+	var keyIdString string 
 	if len(session.Values) > 0 {
 		name = session.Values["UserName"].(string)
 		email = session.Values["Email"].(string)
 		navbar = "navbar.html"
+		keyIdString = session.Values["KeyIdString"].(string) 
 		//if len(name) == 0  {
 		//	name = "Undefined Name"
 		//}
-		h = WebPage{UserName:name, Email:email, NavBar:navbar}
+		h = WebPage{UserName:name, Email:email, NavBar:navbar, KeyIdString:keyIdString}
 	} 
 	return h
 }

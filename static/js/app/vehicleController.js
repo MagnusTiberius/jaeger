@@ -39,10 +39,19 @@ jaegerApp.controller('VehicleCtrlr', ['$scope','$http', function($scope,$http) {
     error(function(data, status, headers, config) {
       // called asynchronously if an error occurs
       // or server returns response with an error status.
+      $scope.list = [];
     });   
 
   $scope.add = function(event) {
   	alert("Add Vehicle");
   };	
+
+  $scope.edit = function(item) {
+    debugger
+    //alert(item.KeyName);
+    //$location.path('/vehicle/bgonza/create');
+    window.location.href = '/vehicle/bgonza/' + $scope.keyIdString + '/admin';
+  };
+
 
 }]);

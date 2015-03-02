@@ -8,6 +8,7 @@
       <div class="panel-heading">Vechicles Admin Panel</div>
       	<div class="panel-body" ng-controller="VehicleCtrlr" ng-init="count=1">
       		<p><button class="btn btn-default" ng-click="add($event)">add</button></p>
+      		<input type="hidden" value="[[.KeyIdString]]" text="[[.KeyIdString]]" ng-model="keyIdString" ng-attr-id="keyIdString" ng-init="keyIdString='[[.KeyIdString]]'">
             <table class="table" >
                <thead>
                   <tr>
@@ -16,34 +17,23 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="item in list.items" ng-init="count=count+1">
-                    
+                  <tr ng-repeat="item in list" ng-init="count=count+1">
                     <td contenteditable="false">
                       <div ng-model="item.id" id="{{ item.id }}">
-                        <div ng-attr-id="{{item.id + 'heading'}}" contenteditable="true" ng-model="item.heading">{{ item.heading }}</div>
-                        <br>
-                        <div ng-attr-id="{{item.id + 'description'}}" contenteditable="true" ng-model="item.description">{{ item.description }}</div>
-                        <div contenteditable="false">
-                          <img ng-attr-id="{{item.id + 'image'}}" ng-src="{{ item.image }}" ng-model="item.image" width="500">
-                          <input type="file" file-upload id="fileup" name="fileup"/>
-                          <ul>
-                              <li ng-repeat="file in files">{{file.name}}</li>
-                          </ul>                          
-                        </div>
+                      	<p>Manufacturer: {{ item.ManufacturerCode }}</p>
+                      	<p>Model: {{ item.ModelCode }}</p>
+                      	<p>Trim: {{ item.TrimCode }}</p>
                       </div>
                     </td>
                     <td>
-                        <button class="btn btn-default">save</button>
-                        <br><br><br>
+                        <button class="btn btn-default" ng-click="edit(item)">edit</button>
                         <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="delete(item)">delete</button>
-                        <br><br><br>
-                        <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="upload($event, this)">upload</button>
                     </td>
                   </tr>
                 </tbody>
             </table>
 
-      		
+
       	</div>
     </div>  
   </div>

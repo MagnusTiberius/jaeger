@@ -6,53 +6,52 @@
   <div class="container">
     <div class="panel panel-default">
       <div class="panel-heading">Carousel Panel</div>
-        <div class="panel-body" ng-controller="CarouselCtrlr" ng-init="count=1">
-            <input type="hidden" value="[[.UploadURL]]" text="[[.UploadURL]]" ng-model="uploadurl" ng-attr-id="uploadurl" ng-init="uploadurl='[[.UploadURL]]'">
-            <input type="hidden" value="[[.RequestURI]]" text="[[.RequestURI]]" ng-model="requesturi" ng-attr-id="requesturi" ng-init="requesturi='[[.RequestURI]]'">
-            <input type="hidden" value="[[.Email]]" text="[[.Email]]" ng-model="email" ng-attr-id="email" ng-init="email='[[.Email]]'">
-            <input type="hidden" value="[[.KeyIdString]]" text="[[.KeyIdString]]" ng-model="keyIdString" ng-attr-id="keyIdString" ng-init="keyIdString='[[.KeyIdString]]'">
-            <input type="hidden" value="[[.VehicleKey]]" text="[[.VehicleKey]]" ng-model="vehiclekey" ng-attr-id="vehiclekey" ng-init="vehiclekey='[[.VehicleKey]]'">
-            <p><button class="btn btn-default" ng-click="add($event)">add</button></p>
-            <p></p>
-            <table class="table" >
-               <thead>
-                  <tr>
-                    <th>Heading</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr ng-repeat="item in list.items" ng-init="count=count+1">
-                    
-                    <td contenteditable="false">
-                      <div ng-model="item.id" id="{{ item.id }}">
-                        <div ng-attr-id="{{item.id + 'heading'}}" contenteditable="true" ng-model="item.heading">{{ item.heading }}</div>
-                        <br>
-                        <div ng-attr-id="{{item.id + 'description'}}" contenteditable="true" ng-model="item.description">{{ item.description }}</div>
-                        <div contenteditable="false">
-                          <img ng-attr-id="{{item.id + 'image'}}" ng-src="{{ item.image }}" ng-model="item.image" width="500">
-                          <input type="file" file-upload id="fileup" name="fileup"/>
-                          <ul>
-                              <li ng-repeat="file in files">{{file.name}}</li>
-                          </ul>                          
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                        <button class="btn btn-default">save</button>
-                        <br><br><br>
-                        <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="delete(item)">delete</button>
-                        <br><br><br>
-                        <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="upload($event, this)">upload</button>
-                    </td>
-                  </tr>
-                </tbody>
-            </table>
+        <div class="panel-body" ng-controller="CarouselCtrlr" ng-init="count=1"  >
+                <input type="hidden" value="[[.UploadURL]]" text="[[.UploadURL]]" ng-model="uploadurl" ng-attr-id="uploadurl" ng-init="uploadurl='[[.UploadURL]]'">
+                <input type="hidden" value="[[.RequestURI]]" text="[[.RequestURI]]" ng-model="requesturi" ng-attr-id="requesturi" ng-init="requesturi='[[.RequestURI]]'">
+                <input type="hidden" value="[[.Email]]" text="[[.Email]]" ng-model="email" ng-attr-id="email" ng-init="email='[[.Email]]'">
+                <input type="hidden" value="[[.KeyIdString]]" text="[[.KeyIdString]]" ng-model="keyIdString" ng-attr-id="keyIdString" ng-init="keyIdString='[[.KeyIdString]]'">
+                <input type="hidden" value="[[.VehicleKey]]" text="[[.VehicleKey]]" ng-model="vehiclekey" ng-attr-id="vehiclekey" ng-init="vehiclekey='[[.VehicleKey]]'">
+                <p><button class="btn btn-default" ng-click="add($event)">add</button></p>
+                <p></p>
+                <table class="table" >
+                   <thead>
+                      <tr>
+                        <th>Heading</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="item in list.items" ng-init="count=count+1">
+                        
+                        <td contenteditable="false">
+                          <div ng-model="item.id" id="{{ item.id }}">
+                            <div ng-attr-id="{{item.id + 'heading'}}" contenteditable="true" ng-model="item.heading">{{ item.heading }}</div>
+                            <br>
+                            <div ng-attr-id="{{item.id + 'description'}}" contenteditable="true" ng-model="item.description">{{ item.description }}</div>
+                            <div contenteditable="false">
+                              <img ng-attr-id="{{item.id + 'image'}}" ng-src="{{ item.image }}" ng-model="item.image" width="500">
+                              <input type="file" file-upload id="fileup" name="fileup"/>
+                              <ul>
+                                  <li ng-repeat="file in files">{{file.name}}</li>
+                              </ul>                          
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-default">save</button>
+                            <br><br><br>
+                            <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="delete(item)">delete</button>
+                            <br><br><br>
+                            <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="upload($event, this)">upload</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                </table>
         </div>
+        <div get-carousel ng-model="vehiclekey" value="[[.VehicleKey]]" my-action="getCarousel"></div>
     </div>  
   </div>
-
-
 
 
 [[template "maindocftr" .]]

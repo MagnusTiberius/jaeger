@@ -87,6 +87,7 @@ func init() {
 	rtr.HandleFunc("/ws/user/list", handleWsUserList).Methods("GET","POST")
 	rtr.HandleFunc("/ws/user/{name:[a-zA-Z0-9]+}/vehicles/getall", handleWsVehiclesUserAdminGetall).Methods("GET","POST")
 	rtr.HandleFunc("/ws/vehicle/{vehicle:[a-zA-Z0-9]+}/carousel/getall", handleWsCarouselGetall).Methods("GET","POST")
+	rtr.HandleFunc("/ws/vehicle/{vehicle:[a-zA-Z0-9]+}/carousel/allocate", handleWsCarouselAllocate).Methods("GET","POST")
 
 	http.Handle("/", rtr)
 
@@ -208,7 +209,7 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func handleWsCarouselGetall(w http.ResponseWriter, r *http.Request) {
+func handleWsCarouselAllocate(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	params := mux.Vars(r)
 	vehicleKey := params["vehicle"]
@@ -220,6 +221,7 @@ func handleWsCarouselGetall(w http.ResponseWriter, r *http.Request) {
                 Filter("KeyName =", vehicleKey)
     var vehicles []inv.VehicleEntity
     keysV, err := q.GetAll(c, &vehicles)
+    //panic(vehicles)
     _ = keysV
     if err != nil {
             panic(err)
@@ -233,11 +235,97 @@ func handleWsCarouselGetall(w http.ResponseWriter, r *http.Request) {
 
     //vehicle := vehicles[0]
 
-	ancestorKey := datastore.NewKey(c, "Vehicle", keyIdString, 0, nil)	
-	q = datastore.NewQuery("Carousel").Ancestor(ancestorKey)
+	userKey := datastore.NewKey(c, "User", keyIdString, 0, nil)	    
+
+	//ancestorKey := datastore.NewKey(c, "Vehicle", keyIdString, 0, userKey)	
+	//ancestorKey := datastore.NewKey(c, "Vehicle", vehicleKey, 0, userKey)
+	//q = datastore.NewQuery("CarouselEntity").Ancestor(ancestorKey)
+	//var carouselItems []inv.CarouselEntity
+	//keysCar, err := q.GetAll(c, &carouselItems)
+	//_ = keysCar
+	//panic(carouselItems)
+
+	e := new(inv.CarouselEntity)
+	e.KeyId = context.RandSeq(32)
+	e.Caption = "Caption"
+	e.Heading = "Heading"
+	e.Content = "Content"
+	e.ImgUrl = "http://placehold.it/350x150"
+	vKey := datastore.NewKey(c, "Vehicle", vehicles[0].KeyName, 0, userKey)
+	eKey := datastore.NewKey(c, "CarouselEntity", e.KeyId, 0, vKey)
+	_, err = datastore.Put(c, eKey, e)
+    if err != nil {
+            panic(err)
+            return
+    }
+
+	q = datastore.NewQuery("CarouselEntity").
+                Filter("KeyId =", e.KeyId)
+    var carouselItems []inv.CarouselEntity
+    _, err = q.GetAll(c, &carouselItems)
+
+	js, err := json.Marshal(carouselItems)
+	if err != nil {
+		panic(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)	
+
+}
+
+func handleWsCarouselGetall(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	params := mux.Vars(r)
+	vehicleKey := params["vehicle"]
+	_ = vehicleKey
+	session, _ := appcontext.Store.Get(r, "jaegersignup")
+	keyIdString := session.Values["KeyIdString"].(string) 
+
+	q := datastore.NewQuery("Vehicle").
+                Filter("KeyName =", vehicleKey)
+    var vehicles []inv.VehicleEntity
+    keysV, err := q.GetAll(c, &vehicles)
+    //panic(vehicles)
+    _ = keysV
+    if err != nil {
+            panic(err)
+            return
+    }
+
+    if len(vehicles) == 0 {
+    	panic("Vehicle not found")
+    	return
+    }
+
+    //vehicle := vehicles[0]
+
+	userKey := datastore.NewKey(c, "User", keyIdString, 0, nil)	    
+
+	//ancestorKey := datastore.NewKey(c, "Vehicle", keyIdString, 0, userKey)	
+	ancestorKey := datastore.NewKey(c, "Vehicle", vehicleKey, 0, userKey)
+	q = datastore.NewQuery("CarouselEntity").Ancestor(ancestorKey)
 	var carouselItems []inv.CarouselEntity
 	keysCar, err := q.GetAll(c, &carouselItems)
 	_ = keysCar
+	//panic(carouselItems)
+
+	if len(carouselItems) == 0  {
+		e := new(inv.CarouselEntity)
+		e.KeyId = context.RandSeq(32)
+		e.Caption = "Caption"
+		e.Heading = "Heading"
+		e.Content = "Content"
+		e.ImgUrl = "http://placehold.it/350x150"
+		vKey := datastore.NewKey(c, "Vehicle", vehicles[0].KeyName, 0, userKey)
+		eKey := datastore.NewKey(c, "CarouselEntity", e.KeyId, 0, vKey)
+		_, err := datastore.Put(c, eKey, e)
+	    if err != nil {
+	            panic(err)
+	            return
+	    }
+	}
+
 	js, err := json.Marshal(carouselItems)
 	if err != nil {
 		panic(err)

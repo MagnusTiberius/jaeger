@@ -23,15 +23,15 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr ng-repeat="item in list.items" ng-init="count=count+1">
+                      <tr ng-repeat="item in list" ng-init="count=count+1">
                         
                         <td contenteditable="false">
-                          <div ng-model="item.id" id="{{ item.id }}">
-                            <div ng-attr-id="{{item.id + 'heading'}}" contenteditable="true" ng-model="item.heading">{{ item.heading }}</div>
+                          <div ng-model="item.KeyId" id="{{ item.KeyId }}">
+                            <div ng-attr-id="{{item.id + 'Heading'}}" contenteditable="true" ng-model="item.Heading">{{ item.Heading }}</div>
                             <br>
-                            <div ng-attr-id="{{item.id + 'description'}}" contenteditable="true" ng-model="item.description">{{ item.description }}</div>
+                            <div ng-attr-id="{{item.KeyId + 'Content'}}" contenteditable="true" ng-model="item.Content">{{ item.Content }}</div>
                             <div contenteditable="false">
-                              <img ng-attr-id="{{item.id + 'image'}}" ng-src="{{ item.image }}" ng-model="item.image" width="500">
+                              <img ng-attr-id="{{item.KeyId + 'ImgUrl'}}" ng-src="{{ item.ImgUrl }}" ng-model="item.ImgUrl" width="500">
                               <input type="file" file-upload id="fileup" name="fileup"/>
                               <ul>
                                   <li ng-repeat="file in files">{{file.name}}</li>
@@ -42,9 +42,9 @@
                         <td>
                             <button class="btn btn-default">save</button>
                             <br><br><br>
-                            <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="delete(item)">delete</button>
+                            <button ng-attr-id="{{ item.KeyId }}" class="btn btn-default" ng-click="delete(item)">delete</button>
                             <br><br><br>
-                            <button ng-attr-id="{{ item.id }}" class="btn btn-default" ng-click="upload($event, this)">upload</button>
+                            <button ng-attr-id="{{ item.KeyId }}" class="btn btn-default" ng-click="upload($event, this)">upload</button>
                         </td>
                       </tr>
                     </tbody>
@@ -53,13 +53,5 @@
         <div get-carousel ng-model="vehiclekey" value="[[.VehicleKey]]" my-action="getCarousel"></div>
     </div>  
   </div>
-
-  <script>
-
-    jQuery( document ).ready(function() {  
-        debugger
-        jQuery("#refreshbtn").click();
-    });
-  </script>
 
 [[template "maindocftr" .]]

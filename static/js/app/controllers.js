@@ -25,30 +25,29 @@ jaegerApp.controller('itemController', function ($scope) {
 
 
 jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function($scope,$routeParams,$http) {
-  var json = {
-    "items":
-        [
+  var json = [
                 {
-                   "id":"11111111111",
-                   "heading":"heading1",
-                   "description":"description of heading1",
-                   "image":"http://placehold.it/350x250"
+                   "KeyId":"11111111111",
+                   "Caption":"heading1",
+                   "Heading":"description of heading1",
+                   "Content":"content",
+                   "ImgUrl":"http://placehold.it/350x250"
                 },
                 {
-                   "id":"222222222222",
-                   "heading":"heading2",
-                   "description":"description of heading2",
-                   "image":"http://placehold.it/350x250"
+                   "KeyId":"222222222222",
+                   "Caption":"heading2",
+                   "Heading":"description of heading2",
+                   "Content":"content",
+                   "ImgUrl":"http://placehold.it/350x250"
                 },
                 {
-                   "id":"3333333333333",
-                   "heading":"heading3",
-                   "description":"description of heading3",
-                   "image":"http://placehold.it/350x250"
+                   "KeyId":"3333333333333",
+                   "Caption":"heading3",
+                   "Heading":"description of heading3",
+                   "Content":"content",
+                   "ImgUrl":"http://placehold.it/350x250"
                 }
-
-        ]
-  };
+        ]  ;
   
   $scope.list = json;
 
@@ -65,7 +64,7 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
   debugger;
 
 
-
+/*
   $scope.getCarousel = function () {
     alert($scope.vehiclekey);
   }
@@ -173,6 +172,8 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
       });
   };  
 
+*/
+
   $scope.refresh = function(item) {
     alert("refresh");
     debugger;
@@ -191,6 +192,8 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
       });     
   };
 
+/*
+
   $scope.delete = function(item) {
     debugger
     var index=$scope.list.items.indexOf(item);
@@ -206,6 +209,8 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
     $scope.list.items.push(newitm);
   };
   
+*/
+
 }]);
 
 jaegerApp.directive('contenteditable', function () {

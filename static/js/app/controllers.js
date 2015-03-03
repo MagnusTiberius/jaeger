@@ -260,6 +260,7 @@ jaegerApp.directive('getCarousel', function () {
         link: function (scope, el, attrs) {
           var expressionHandler = scope.method();
           var id = attrs.value;
+          var vk = {{vehiclekey}};
           alert("get car:" + attrs.value);
           //scope.getCarousel();
           $(element).click(function( e, rowid ) {
@@ -268,3 +269,8 @@ jaegerApp.directive('getCarousel', function () {
         }
     };
 });
+
+
+/*
+http://weblogs.asp.net/dwahlin/creating-custom-angularjs-directives-part-2-isolate-scope
+*/

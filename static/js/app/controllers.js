@@ -24,8 +24,7 @@ jaegerApp.controller('itemController', function ($scope) {
 
 
 
-
-jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) {
+jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function($scope,$routeParams,$http) {
   var json = {
     "items":
         [
@@ -63,20 +62,9 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
 
   $scope.uploadurl;
 
+  debugger;
 
 
-    $http.get('/ws/vehicle/' + $scope.vehiclekey + '/carousel/getall').
-      success(function(data, status, headers, config) {
-        // this callback will be called asynchronously
-        // when the response is available
-        debugger;
-        //$scope.list = data;
-      }).
-      error(function(data, status, headers, config) {
-        // called asynchronously if an error occurs
-        // or server returns response with an error status.
-        //$scope.list = [];
-      }); 
 
   $scope.getCarousel = function () {
     alert($scope.vehiclekey);
@@ -185,6 +173,23 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$http', function($scope,$http) 
       });
   };  
 
+  $scope.refresh = function(item) {
+    alert("refresh");
+    debugger;
+    $http.get('/ws/vehicle/' + $scope.vehiclekey + '/carousel/getall').
+      success(function(data, status, headers, config) {
+        // this callback will be called asynchronously
+        // when the response is available
+        debugger;
+        $scope.list = data;
+      }).
+      error(function(data, status, headers, config) {
+        // called asynchronously if an error occurs
+        // or server returns response with an error status.
+        debugger;
+        $scope.list = [];
+      });     
+  };
 
   $scope.delete = function(item) {
     debugger
@@ -258,10 +263,11 @@ jaegerApp.directive('getCarousel', function () {
     return {
         scope: { method:'&myAction' },
         link: function (scope, el, attrs) {
+          debugger;
           var expressionHandler = scope.method();
           var id = attrs.value;
-          var vk = {{vehiclekey}};
-          alert("get car:" + attrs.value);
+          //var vk = {{vehiclekey}};
+          //alert("get car:" + attrs.value);
           //scope.getCarousel();
           $(element).click(function( e, rowid ) {
             expressionHandler(id);

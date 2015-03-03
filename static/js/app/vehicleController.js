@@ -1,5 +1,6 @@
 
 
+
 jaegerApp.controller('VehicleCtrlr', ['$scope','$http', function($scope,$http) {
 
   var json = {
@@ -43,8 +44,8 @@ jaegerApp.controller('VehicleCtrlr', ['$scope','$http', function($scope,$http) {
     });   
 
   $scope.add = function(event) {
-  	alert("Add Vehicle");
-  };	
+    alert("Add Vehicle");
+  };  
 
   $scope.edit = function(item) {
     debugger

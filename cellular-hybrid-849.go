@@ -88,6 +88,7 @@ func init() {
 	rtr.HandleFunc("/ws/user/{name:[a-zA-Z0-9]+}/vehicles/getall", handleWsVehiclesUserAdminGetall).Methods("GET","POST")
 	rtr.HandleFunc("/ws/vehicle/{vehicle:[a-zA-Z0-9]+}/carousel/getall", handleWsCarouselGetall).Methods("GET","POST")
 	rtr.HandleFunc("/ws/vehicle/{vehicle:[a-zA-Z0-9]+}/carousel/allocate", handleWsCarouselAllocate).Methods("GET","POST")
+	rtr.HandleFunc("/ws/vehicle/carousel/{carousel:[a-zA-Z0-9]+}/delete", handleWsCarouselDelete).Methods("GET","POST")
 
 	http.Handle("/", rtr)
 
@@ -208,6 +209,28 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 	b.WriteTo(w)
 }
 
+
+
+func handleWsCarouselDelete(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	params := mux.Vars(r)
+	pkey := params["carousel"]
+	_ = pkey
+
+	q := datastore.NewQuery("CarouselEntity").
+                Filter("KeyId =", pkey)
+    var carouselList []inv.CarouselEntity
+    keys, err := q.GetAll(c, &carouselList)
+    if err != nil {
+            panic(err)
+            return
+    }
+    err = datastore.Delete(c, keys[0])
+    if err != nil {
+            panic(err)
+            return
+    }
+}
 
 func handleWsCarouselAllocate(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)

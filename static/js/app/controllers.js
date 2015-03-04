@@ -182,17 +182,37 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
         // this callback will be called asynchronously
         // when the response is available
         //alert("allocated");
+        $scope.refresh();
       }).
       error(function(data, status, headers, config) {
         // called asynchronously if an error occurs
         // or server returns response with an error status.
         //alert("allocate error");
       });     
-
-      refresh();
+      debugger;
+      $scope.refresh();
 
   };
 
+  $scope.delete = function(item) {
+    debugger
+    var index=$scope.list.indexOf(item);
+    var item = $scope.list[index];
+    //$scope.list.items.splice(index,1);
+
+    $http.get('/ws/vehicle/carousel/' + item.KeyId + '/delete').
+      success(function(data, status, headers, config) {
+        // this callback will be called asynchronously
+        // when the response is available
+        //alert("allocated");
+        $scope.refresh();
+      }).
+      error(function(data, status, headers, config) {
+        // called asynchronously if an error occurs
+        // or server returns response with an error status.
+        //alert("allocate error");
+      });     
+  };
 /*
 
   $scope.delete = function(item) {

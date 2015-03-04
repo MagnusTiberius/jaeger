@@ -190,8 +190,6 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
         //alert("allocate error");
       });     
       debugger;
-      $scope.refresh();
-
   };
 
   $scope.delete = function(item) {

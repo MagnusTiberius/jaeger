@@ -175,13 +175,14 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
 */
 
   $scope.refresh = function(item) {
-    alert("refresh");
+    //alert("refresh");
     debugger;
     $http.get('/ws/vehicle/' + $scope.vehiclekey + '/carousel/getall').
       success(function(data, status, headers, config) {
         // this callback will be called asynchronously
         // when the response is available
         debugger;
+        $scope.list = [];
         $scope.list = data;
       }).
       error(function(data, status, headers, config) {
@@ -190,6 +191,21 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
         debugger;
         $scope.list = [];
       });     
+  };
+
+  $scope.add = function(event) {
+    $http.get('/ws/vehicle/' + $scope.vehiclekey + '/carousel/allocate').
+      success(function(data, status, headers, config) {
+        // this callback will be called asynchronously
+        // when the response is available
+        alert("allocated");
+      }).
+      error(function(data, status, headers, config) {
+        // called asynchronously if an error occurs
+        // or server returns response with an error status.
+        alert("allocate error");
+      });     
+      $scope.refresh();
   };
 
 /*

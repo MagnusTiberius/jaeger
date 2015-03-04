@@ -247,9 +247,9 @@ func handleWsCarouselAllocate(w http.ResponseWriter, r *http.Request) {
 
 	e := new(inv.CarouselEntity)
 	e.KeyId = context.RandSeq(32)
-	e.Caption = "Caption"
-	e.Heading = "Heading"
-	e.Content = "Content"
+	e.Caption = "Caption " + context.RandSeq(20)
+	e.Heading = "Heading " + context.RandSeq(30)
+	e.Content = "Content " + context.RandSeq(50)
 	e.ImgUrl = "http://placehold.it/350x150"
 	vKey := datastore.NewKey(c, "Vehicle", vehicles[0].KeyName, 0, userKey)
 	eKey := datastore.NewKey(c, "CarouselEntity", e.KeyId, 0, vKey)
@@ -259,10 +259,10 @@ func handleWsCarouselAllocate(w http.ResponseWriter, r *http.Request) {
             return
     }
 
-	q = datastore.NewQuery("CarouselEntity").
+	q1 := datastore.NewQuery("CarouselEntity").
                 Filter("KeyId =", e.KeyId)
     var carouselItems []inv.CarouselEntity
-    _, err = q.GetAll(c, &carouselItems)
+    _, err = q1.GetAll(c, &carouselItems)
 
 	js, err := json.Marshal(carouselItems)
 	if err != nil {
@@ -310,7 +310,7 @@ func handleWsCarouselGetall(w http.ResponseWriter, r *http.Request) {
 	_ = keysCar
 	//panic(carouselItems)
 
-	if len(carouselItems) == 0  {
+	if len(carouselItems) == 0 && false {
 		e := new(inv.CarouselEntity)
 		e.KeyId = context.RandSeq(32)
 		e.Caption = "Caption"
@@ -564,7 +564,7 @@ func handleVehicleAdmin(w http.ResponseWriter, r *http.Request) {
             return
     }
 
-    if len(carouselEntityList) == 0 {
+    if len(carouselEntityList) == 0  && false {
     	itm := new(inv.CarouselEntity)
     	itm.KeyId = context.RandSeq(32)
     	key := datastore.NewKey(apengcontext, "CarouselEntity", itm.KeyId, 0, vk)

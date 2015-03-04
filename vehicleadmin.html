@@ -12,39 +12,43 @@
                 <input type="hidden" value="[[.Email]]" text="[[.Email]]" ng-model="email" ng-attr-id="email" ng-init="email='[[.Email]]'">
                 <input type="hidden" value="[[.KeyIdString]]" text="[[.KeyIdString]]" ng-model="keyIdString" ng-attr-id="keyIdString" ng-init="keyIdString='[[.KeyIdString]]'">
                 <input type="hidden" value="[[.VehicleKey]]" text="[[.VehicleKey]]" ng-model="vehiclekey" ng-attr-id="vehiclekey" ng-init="vehiclekey='[[.VehicleKey]]'">
-                
+
                 <p><button class="btn btn-default" ng-click="add($event)">add</button></p>
                 <p><button id="refreshbtn" name="refreshbtn" class="btn btn-default" ng-click="refresh($event)">refresh</button></p>
                 <p></p>
                 <table class="table" >
                    <thead>
                       <tr>
+                        <th>Line</th>
                         <th>Heading</th>
+                        <th>Image</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr ng-repeat="item in list" ng-init="count=count+1">
-                        
+                      <tr ng-repeat="item in list" >
+                        <td ng-init="count=count+1">{{ count }}</td>
                         <td contenteditable="false">
                           <div ng-model="item.KeyId" id="{{ item.KeyId }}">
                             <div ng-attr-id="{{item.id + 'Heading'}}" contenteditable="true" ng-model="item.Heading">{{ item.Heading }}</div>
                             <br>
                             <div ng-attr-id="{{item.KeyId + 'Content'}}" contenteditable="true" ng-model="item.Content">{{ item.Content }}</div>
+                          </div>
+                        </td>
+                        <td>
                             <div contenteditable="false">
-                              <img ng-attr-id="{{item.KeyId + 'ImgUrl'}}" ng-src="{{ item.ImgUrl }}" ng-model="item.ImgUrl" width="500">
+                              <img ng-attr-id="{{item.KeyId + 'ImgUrl'}}" ng-src="{{ item.ImgUrl }}" ng-model="item.ImgUrl" width="150">
                               <input type="file" file-upload id="fileup" name="fileup"/>
                               <ul>
                                   <li ng-repeat="file in files">{{file.name}}</li>
                               </ul>                          
                             </div>
-                          </div>
                         </td>
                         <td>
                             <button class="btn btn-default">save</button>
-                            <br><br><br>
+                            <br>
                             <button ng-attr-id="{{ item.KeyId }}" class="btn btn-default" ng-click="delete(item)">delete</button>
-                            <br><br><br>
+                            <br>
                             <button ng-attr-id="{{ item.KeyId }}" class="btn btn-default" ng-click="upload($event, this)">upload</button>
                         </td>
                       </tr>

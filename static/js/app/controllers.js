@@ -26,27 +26,7 @@ jaegerApp.controller('itemController', function ($scope) {
 
 jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function($scope,$routeParams,$http) {
   var json = [
-                {
-                   "KeyId":"11111111111",
-                   "Caption":"heading1",
-                   "Heading":"description of heading1",
-                   "Content":"content",
-                   "ImgUrl":"http://placehold.it/350x250"
-                },
-                {
-                   "KeyId":"222222222222",
-                   "Caption":"heading2",
-                   "Heading":"description of heading2",
-                   "Content":"content",
-                   "ImgUrl":"http://placehold.it/350x250"
-                },
-                {
-                   "KeyId":"3333333333333",
-                   "Caption":"heading3",
-                   "Heading":"description of heading3",
-                   "Content":"content",
-                   "ImgUrl":"http://placehold.it/350x250"
-                }
+
         ]  ;
   
   $scope.list = json;
@@ -182,8 +162,11 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
         // this callback will be called asynchronously
         // when the response is available
         debugger;
-        $scope.list = [];
-        $scope.list = data;
+        if ( data == "null") {
+          $scope.list = [];
+        } else {
+          $scope.list = data;
+        }
       }).
       error(function(data, status, headers, config) {
         // called asynchronously if an error occurs
@@ -198,14 +181,16 @@ jaegerApp.controller('CarouselCtrlr', ['$scope','$routeParams','$http', function
       success(function(data, status, headers, config) {
         // this callback will be called asynchronously
         // when the response is available
-        alert("allocated");
+        //alert("allocated");
       }).
       error(function(data, status, headers, config) {
         // called asynchronously if an error occurs
         // or server returns response with an error status.
-        alert("allocate error");
+        //alert("allocate error");
       });     
-      $scope.refresh();
+
+      refresh();
+
   };
 
 /*

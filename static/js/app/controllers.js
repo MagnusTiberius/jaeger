@@ -282,7 +282,7 @@ jaegerApp.directive('fileUpload', function () {
     };
 });
 
-
+/*
 jaegerApp.directive('getCarousel', function () {
     return {
         scope: { method:'&myAction' },
@@ -300,7 +300,7 @@ jaegerApp.directive('getCarousel', function () {
     };
 });
 
-
+*/
 /*
 http://weblogs.asp.net/dwahlin/creating-custom-angularjs-directives-part-2-isolate-scope
 */
